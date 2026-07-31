@@ -15,6 +15,8 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAlmacenesRouteImport } from './routes/_authenticated/almacenes'
 import { Route as AuthenticatedAsignacionesRouteImport } from './routes/_authenticated/asignaciones'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedFallasRouteImport } from './routes/_authenticated/fallas'
+import { Route as AuthenticatedPersonalRouteImport } from './routes/_authenticated/personal'
 import { Route as AuthenticatedRecepcionesRouteImport } from './routes/_authenticated/recepciones'
 import { Route as AuthenticatedEquiposIndexRouteImport } from './routes/_authenticated/equipos.index'
 
@@ -48,6 +50,16 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedFallasRoute = AuthenticatedFallasRouteImport.update({
+  id: '/fallas',
+  path: '/fallas',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPersonalRoute = AuthenticatedPersonalRouteImport.update({
+  id: '/personal',
+  path: '/personal',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedRecepcionesRoute =
   AuthenticatedRecepcionesRouteImport.update({
     id: '/recepciones',
@@ -67,6 +79,8 @@ export interface FileRoutesByFullPath {
   '/almacenes': typeof AuthenticatedAlmacenesRoute
   '/asignaciones': typeof AuthenticatedAsignacionesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/fallas': typeof AuthenticatedFallasRoute
+  '/personal': typeof AuthenticatedPersonalRoute
   '/recepciones': typeof AuthenticatedRecepcionesRoute
   '/equipos/': typeof AuthenticatedEquiposIndexRoute
 }
@@ -76,6 +90,8 @@ export interface FileRoutesByTo {
   '/almacenes': typeof AuthenticatedAlmacenesRoute
   '/asignaciones': typeof AuthenticatedAsignacionesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/fallas': typeof AuthenticatedFallasRoute
+  '/personal': typeof AuthenticatedPersonalRoute
   '/recepciones': typeof AuthenticatedRecepcionesRoute
   '/equipos': typeof AuthenticatedEquiposIndexRoute
 }
@@ -87,6 +103,8 @@ export interface FileRoutesById {
   '/_authenticated/almacenes': typeof AuthenticatedAlmacenesRoute
   '/_authenticated/asignaciones': typeof AuthenticatedAsignacionesRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/fallas': typeof AuthenticatedFallasRoute
+  '/_authenticated/personal': typeof AuthenticatedPersonalRoute
   '/_authenticated/recepciones': typeof AuthenticatedRecepcionesRoute
   '/_authenticated/equipos/': typeof AuthenticatedEquiposIndexRoute
 }
@@ -98,6 +116,8 @@ export interface FileRouteTypes {
     | '/almacenes'
     | '/asignaciones'
     | '/dashboard'
+    | '/fallas'
+    | '/personal'
     | '/recepciones'
     | '/equipos/'
   fileRoutesByTo: FileRoutesByTo
@@ -107,6 +127,8 @@ export interface FileRouteTypes {
     | '/almacenes'
     | '/asignaciones'
     | '/dashboard'
+    | '/fallas'
+    | '/personal'
     | '/recepciones'
     | '/equipos'
   id:
@@ -117,6 +139,8 @@ export interface FileRouteTypes {
     | '/_authenticated/almacenes'
     | '/_authenticated/asignaciones'
     | '/_authenticated/dashboard'
+    | '/_authenticated/fallas'
+    | '/_authenticated/personal'
     | '/_authenticated/recepciones'
     | '/_authenticated/equipos/'
   fileRoutesById: FileRoutesById
@@ -171,6 +195,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/fallas': {
+      id: '/_authenticated/fallas'
+      path: '/fallas'
+      fullPath: '/fallas'
+      preLoaderRoute: typeof AuthenticatedFallasRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/personal': {
+      id: '/_authenticated/personal'
+      path: '/personal'
+      fullPath: '/personal'
+      preLoaderRoute: typeof AuthenticatedPersonalRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/recepciones': {
       id: '/_authenticated/recepciones'
       path: '/recepciones'
@@ -192,6 +230,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAlmacenesRoute: typeof AuthenticatedAlmacenesRoute
   AuthenticatedAsignacionesRoute: typeof AuthenticatedAsignacionesRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedFallasRoute: typeof AuthenticatedFallasRoute
+  AuthenticatedPersonalRoute: typeof AuthenticatedPersonalRoute
   AuthenticatedRecepcionesRoute: typeof AuthenticatedRecepcionesRoute
   AuthenticatedEquiposIndexRoute: typeof AuthenticatedEquiposIndexRoute
 }
@@ -200,6 +240,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAlmacenesRoute: AuthenticatedAlmacenesRoute,
   AuthenticatedAsignacionesRoute: AuthenticatedAsignacionesRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedFallasRoute: AuthenticatedFallasRoute,
+  AuthenticatedPersonalRoute: AuthenticatedPersonalRoute,
   AuthenticatedRecepcionesRoute: AuthenticatedRecepcionesRoute,
   AuthenticatedEquiposIndexRoute: AuthenticatedEquiposIndexRoute,
 }
