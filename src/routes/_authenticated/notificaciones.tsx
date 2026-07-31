@@ -20,7 +20,7 @@ export const Route = createFileRoute("/_authenticated/notificaciones")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: Notificaciones;
+  component: Notificaciones,
 });
 
 function Notificaciones() {
