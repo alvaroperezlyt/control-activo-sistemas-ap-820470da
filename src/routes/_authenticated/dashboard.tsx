@@ -55,7 +55,7 @@ function Dashboard() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("asignaciones")
-        .select("id, fecha_asignacion, estado, personal_nombre, equipos(codigo_interno, tipo)")
+        .select("id, fecha_entrega, fecha_retorno, personal_nombre, equipos(codigo_interno, tipo)")
         .order("created_at", { ascending: false })
         .limit(6);
       if (error) throw error;
@@ -64,7 +64,7 @@ function Dashboard() {
   });
 
   const sync = useMutation({
-    mutationFn: () => sincronizar({ data: {} }),
+    mutationFn: () => sincronizar(),
     onSuccess: (r) => {
       queryClient.invalidateQueries();
       toast.success(`Personal sincronizado: ${r.total} registros, ${r.desvinculados} desvinculados.`);
@@ -73,10 +73,10 @@ function Dashboard() {
   });
 
   const imp = useMutation({
-    mutationFn: () => importar({ data: {} }),
+    mutationFn: () => importar(),
     onSuccess: (r) => {
       queryClient.invalidateQueries();
-      toast.success(`Importación: ${r.insertados} nuevos, ${r.omitidos} ya existentes.`);
+      toast.success(`Importación: ${r.total} equipos (${r.computadoras} PC, ${r.telefonos} tel., ${r.lineas} líneas).`);
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -172,9 +172,9 @@ function Dashboard() {
                 <tr key={a.id} className="border-b border-border/60 last:border-0">
                   <td className="py-2 font-mono">{a.equipos?.codigo_interno ?? "—"}</td>
                   <td className="py-2">{a.personal_nombre}</td>
-                  <td className="py-2">{formatearFecha(a.fecha_asignacion)}</td>
+                  <td className="py-2">{formatearFecha(a.fecha_entrega)}</td>
                   <td className="py-2">
-                    <EstadoBadge estado={a.estado} />
+                    <EstadoBadge estado={a.fecha_retorno ? "DEVUELTO" : "ASIGNADO"} />
                   </td>
                 </tr>
               ))}
