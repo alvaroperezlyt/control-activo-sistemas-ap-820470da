@@ -42,6 +42,8 @@ function Asignaciones() {
   const [equipoId, setEquipoId] = useState("");
   const [fecha, setFecha] = useState(() => new Date().toISOString().slice(0, 10));
   const [observaciones, setObservaciones] = useState("");
+  const [filtroPersona, setFiltroPersona] = useState<string | null>(null);
+  const [editando, setEditando] = useState<{ id: string; entrega: string; retorno: string } | null>(null);
 
   const { data: libres = [] } = useQuery({
     queryKey: ["equipos", "libres"],
@@ -57,18 +59,44 @@ function Asignaciones() {
   });
 
   const { data: asignaciones = [] } = useQuery({
-    queryKey: ["asignaciones", "lista"],
+    queryKey: ["asignaciones", "lista", filtroPersona],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let q = supabase
         .from("asignaciones")
         .select(
-          "id, fecha_entrega, fecha_retorno, personal_nombre, observaciones, equipos(id, codigo_interno, tipo)",
+          "id, fecha_entrega, fecha_retorno, personal_codigo, personal_nombre, observaciones, equipos(id, codigo_interno, tipo)",
         )
         .order("fecha_entrega", { ascending: false });
+      if (filtroPersona) q = q.eq("personal_codigo", filtroPersona);
+      const { data, error } = await q;
       if (error) throw error;
       return data ?? [];
     },
   });
+
+  const guardarFechas = useMutation({
+    mutationFn: async () => {
+      if (!editando) return;
+      if (!editando.entrega) throw new Error("La fecha de entrega es obligatoria.");
+      if (editando.retorno && editando.retorno < editando.entrega)
+        throw new Error("La devolución no puede ser anterior a la entrega.");
+      const { error } = await supabase
+        .from("asignaciones")
+        .update({
+          fecha_entrega: editando.entrega,
+          fecha_retorno: editando.retorno || null,
+        })
+        .eq("id", editando.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries();
+      toast.success("Fechas actualizadas");
+      setEditando(null);
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
 
   const asignar = useMutation({
     mutationFn: async () => {
