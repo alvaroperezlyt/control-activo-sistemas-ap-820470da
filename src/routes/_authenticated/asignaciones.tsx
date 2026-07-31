@@ -135,6 +135,22 @@ function Asignaciones() {
         </Button>
       </PageHeader>
 
+      <div className="panel mb-4 flex flex-wrap items-end gap-3 p-4">
+        <div className="min-w-64 flex-1 space-y-2">
+          <Label>Filtrar por persona</Label>
+          <PersonalSelect
+            value={filtroPersona}
+            onChange={(codigo) => setFiltroPersona(codigo)}
+            placeholder="Todas las personas…"
+          />
+        </div>
+        {filtroPersona && (
+          <Button variant="outline" onClick={() => setFiltroPersona(null)}>
+            Limpiar filtro
+          </Button>
+        )}
+      </div>
+
       <div className="panel overflow-x-auto p-4">
         <table className="w-full text-sm">
           <thead>
@@ -145,12 +161,13 @@ function Asignaciones() {
               <th className="pb-2 font-medium text-muted-foreground">Entrega</th>
               <th className="pb-2 font-medium text-muted-foreground">Devolución</th>
               <th className="pb-2 font-medium text-muted-foreground">Estado</th>
+              <th className="pb-2 font-medium text-muted-foreground">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {asignaciones.length === 0 && (
               <tr>
-                <td colSpan={6} className="py-6 text-muted-foreground">
+                <td colSpan={7} className="py-6 text-muted-foreground">
                   Sin asignaciones registradas.
                 </td>
               </tr>
@@ -175,11 +192,65 @@ function Asignaciones() {
                 <td className="py-2">
                   <EstadoBadge estado={a.fecha_retorno ? "DEVUELTO" : "ASIGNADO"} />
                 </td>
+                <td className="py-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() =>
+                      setEditando({
+                        id: a.id,
+                        entrega: a.fecha_entrega,
+                        retorno: a.fecha_retorno ?? "",
+                      })
+                    }
+                  >
+                    <Pencil className="size-4" />
+                    Editar fechas
+                  </Button>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      <Dialog open={editando !== null} onOpenChange={(v) => !v && setEditando(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Editar fechas de la asignación</DialogTitle>
+            <DialogDescription>Corrige la fecha de entrega o de devolución.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit-entrega">Fecha de entrega</Label>
+              <Input
+                id="edit-entrega"
+                type="date"
+                value={editando?.entrega ?? ""}
+                onChange={(e) => setEditando((prev) => (prev ? { ...prev, entrega: e.target.value } : prev))}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-retorno">Fecha de devolución (opcional)</Label>
+              <Input
+                id="edit-retorno"
+                type="date"
+                value={editando?.retorno ?? ""}
+                onChange={(e) => setEditando((prev) => (prev ? { ...prev, retorno: e.target.value } : prev))}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditando(null)}>
+              Cancelar
+            </Button>
+            <Button onClick={() => guardarFechas.mutate()} disabled={guardarFechas.isPending}>
+              Guardar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
 
       <Dialog open={abierto} onOpenChange={setAbierto}>
         <DialogContent>
