@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Plus } from "lucide-react";
+import { Pencil, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { TIPOS, formatearFecha, type TipoEquipo } from "@/lib/tipos";
 import { PageHeader, EstadoBadge } from "@/components/PageHeader";
