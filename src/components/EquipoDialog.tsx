@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 import { TIPOS, type TipoEquipo } from "@/lib/tipos";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -89,7 +90,7 @@ export function EquipoDialog({
 
   const guardar = useMutation({
     mutationFn: async () => {
-      const fila: Record<string, unknown> = {
+      const fila: Record<string, unknown> & { tipo: TipoEquipo } = {
         tipo,
         codigo_interno: codigo.trim().toUpperCase(),
         observaciones: observaciones.trim() || null,
@@ -108,10 +109,15 @@ export function EquipoDialog({
       fila["datos"] = datos;
 
       if (equipo) {
-        const { error } = await supabase.from("equipos").update(fila).eq("id", equipo.id);
+        const { error } = await supabase
+          .from("equipos")
+          .update(fila as Database["public"]["Tables"]["equipos"]["Update"])
+          .eq("id", equipo.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("equipos").insert(fila as never);
+        const { error } = await supabase
+          .from("equipos")
+          .insert(fila as Database["public"]["Tables"]["equipos"]["Insert"]);
         if (error) throw error;
       }
     },
