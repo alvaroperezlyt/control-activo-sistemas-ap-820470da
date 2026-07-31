@@ -9,8 +9,11 @@ export const sincronizarPersonal = createServerFn({ method: "POST" })
     const personal = await leerPersonal();
     if (personal.length === 0) return { total: 0, desvinculados: 0 };
 
+    // Una misma persona puede repetirse en la hoja: se conserva la última fila.
+    const unicos = new Map(personal.map((p) => [p.codigo, p]));
+
     const { error } = await context.supabase.from("personal").upsert(
-      personal.map((p) => ({
+      [...unicos.values()].map((p) => ({
         codigo: p.codigo,
         nombre: p.nombre,
         puesto: p.puesto,
@@ -70,9 +73,12 @@ export const importarEquiposDesdeSheets = createServerFn({ method: "POST" })
       };
     });
 
+    // El relevamiento puede repetir un mismo código interno: se conserva la última fila.
+    const filasUnicas = [...new Map(filas.map((f) => [f.codigo_interno, f])).values()];
+
     const { data: guardados, error } = await context.supabase
       .from("equipos")
-      .upsert(filas, { onConflict: "codigo_interno" })
+      .upsert(filasUnicas, { onConflict: "codigo_interno" })
       .select("id, codigo_interno, personal_codigo, estado_asignacion");
     if (error) throw new Error(error.message);
 
