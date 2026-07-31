@@ -16,9 +16,11 @@ import { Route as AuthenticatedAlmacenesRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAsignacionesRouteImport } from './routes/_authenticated/asignaciones'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedFallasRouteImport } from './routes/_authenticated/fallas'
+import { Route as AuthenticatedNotificacionesRouteImport } from './routes/_authenticated/notificaciones'
 import { Route as AuthenticatedPersonalRouteImport } from './routes/_authenticated/personal'
 import { Route as AuthenticatedRecepcionesRouteImport } from './routes/_authenticated/recepciones'
 import { Route as AuthenticatedEquiposIndexRouteImport } from './routes/_authenticated/equipos.index'
+import { Route as AuthenticatedEquiposIdRouteImport } from './routes/_authenticated/equipos.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -55,6 +57,12 @@ const AuthenticatedFallasRoute = AuthenticatedFallasRouteImport.update({
   path: '/fallas',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedNotificacionesRoute =
+  AuthenticatedNotificacionesRouteImport.update({
+    id: '/notificaciones',
+    path: '/notificaciones',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedPersonalRoute = AuthenticatedPersonalRouteImport.update({
   id: '/personal',
   path: '/personal',
@@ -72,6 +80,11 @@ const AuthenticatedEquiposIndexRoute =
     path: '/equipos/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedEquiposIdRoute = AuthenticatedEquiposIdRouteImport.update({
+  id: '/equipos/$id',
+  path: '/equipos/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -80,8 +93,10 @@ export interface FileRoutesByFullPath {
   '/asignaciones': typeof AuthenticatedAsignacionesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/fallas': typeof AuthenticatedFallasRoute
+  '/notificaciones': typeof AuthenticatedNotificacionesRoute
   '/personal': typeof AuthenticatedPersonalRoute
   '/recepciones': typeof AuthenticatedRecepcionesRoute
+  '/equipos/$id': typeof AuthenticatedEquiposIdRoute
   '/equipos/': typeof AuthenticatedEquiposIndexRoute
 }
 export interface FileRoutesByTo {
@@ -91,8 +106,10 @@ export interface FileRoutesByTo {
   '/asignaciones': typeof AuthenticatedAsignacionesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/fallas': typeof AuthenticatedFallasRoute
+  '/notificaciones': typeof AuthenticatedNotificacionesRoute
   '/personal': typeof AuthenticatedPersonalRoute
   '/recepciones': typeof AuthenticatedRecepcionesRoute
+  '/equipos/$id': typeof AuthenticatedEquiposIdRoute
   '/equipos': typeof AuthenticatedEquiposIndexRoute
 }
 export interface FileRoutesById {
@@ -104,8 +121,10 @@ export interface FileRoutesById {
   '/_authenticated/asignaciones': typeof AuthenticatedAsignacionesRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/fallas': typeof AuthenticatedFallasRoute
+  '/_authenticated/notificaciones': typeof AuthenticatedNotificacionesRoute
   '/_authenticated/personal': typeof AuthenticatedPersonalRoute
   '/_authenticated/recepciones': typeof AuthenticatedRecepcionesRoute
+  '/_authenticated/equipos/$id': typeof AuthenticatedEquiposIdRoute
   '/_authenticated/equipos/': typeof AuthenticatedEquiposIndexRoute
 }
 export interface FileRouteTypes {
@@ -117,8 +136,10 @@ export interface FileRouteTypes {
     | '/asignaciones'
     | '/dashboard'
     | '/fallas'
+    | '/notificaciones'
     | '/personal'
     | '/recepciones'
+    | '/equipos/$id'
     | '/equipos/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -128,8 +149,10 @@ export interface FileRouteTypes {
     | '/asignaciones'
     | '/dashboard'
     | '/fallas'
+    | '/notificaciones'
     | '/personal'
     | '/recepciones'
+    | '/equipos/$id'
     | '/equipos'
   id:
     | '__root__'
@@ -140,8 +163,10 @@ export interface FileRouteTypes {
     | '/_authenticated/asignaciones'
     | '/_authenticated/dashboard'
     | '/_authenticated/fallas'
+    | '/_authenticated/notificaciones'
     | '/_authenticated/personal'
     | '/_authenticated/recepciones'
+    | '/_authenticated/equipos/$id'
     | '/_authenticated/equipos/'
   fileRoutesById: FileRoutesById
 }
@@ -202,6 +227,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFallasRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/notificaciones': {
+      id: '/_authenticated/notificaciones'
+      path: '/notificaciones'
+      fullPath: '/notificaciones'
+      preLoaderRoute: typeof AuthenticatedNotificacionesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/personal': {
       id: '/_authenticated/personal'
       path: '/personal'
@@ -223,6 +255,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedEquiposIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/equipos/$id': {
+      id: '/_authenticated/equipos/$id'
+      path: '/equipos/$id'
+      fullPath: '/equipos/$id'
+      preLoaderRoute: typeof AuthenticatedEquiposIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -231,8 +270,10 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAsignacionesRoute: typeof AuthenticatedAsignacionesRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedFallasRoute: typeof AuthenticatedFallasRoute
+  AuthenticatedNotificacionesRoute: typeof AuthenticatedNotificacionesRoute
   AuthenticatedPersonalRoute: typeof AuthenticatedPersonalRoute
   AuthenticatedRecepcionesRoute: typeof AuthenticatedRecepcionesRoute
+  AuthenticatedEquiposIdRoute: typeof AuthenticatedEquiposIdRoute
   AuthenticatedEquiposIndexRoute: typeof AuthenticatedEquiposIndexRoute
 }
 
@@ -241,8 +282,10 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAsignacionesRoute: AuthenticatedAsignacionesRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedFallasRoute: AuthenticatedFallasRoute,
+  AuthenticatedNotificacionesRoute: AuthenticatedNotificacionesRoute,
   AuthenticatedPersonalRoute: AuthenticatedPersonalRoute,
   AuthenticatedRecepcionesRoute: AuthenticatedRecepcionesRoute,
+  AuthenticatedEquiposIdRoute: AuthenticatedEquiposIdRoute,
   AuthenticatedEquiposIndexRoute: AuthenticatedEquiposIndexRoute,
 }
 
