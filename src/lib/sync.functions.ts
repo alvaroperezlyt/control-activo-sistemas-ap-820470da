@@ -5,14 +5,18 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 export const sincronizarPersonal = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    // El usuario ya quedó verificado por el middleware; la tabla "personal" es de solo
+    // lectura para la app, así que la escritura de la sincronización usa el cliente del servidor.
+    if (!context.userId) throw new Error("Sesión no válida.");
     const { leerPersonal } = await import("./sheets.server");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const personal = await leerPersonal();
     if (personal.length === 0) return { total: 0, desvinculados: 0 };
 
     // Una misma persona puede repetirse en la hoja: se conserva la última fila.
     const unicos = new Map(personal.map((p) => [p.codigo, p]));
 
-    const { error } = await context.supabase.from("personal").upsert(
+    const { error } = await supabaseAdmin.from("personal").upsert(
       [...unicos.values()].map((p) => ({
         codigo: p.codigo,
         nombre: p.nombre,
