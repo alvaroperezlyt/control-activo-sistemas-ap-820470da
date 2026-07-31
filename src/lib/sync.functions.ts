@@ -108,7 +108,7 @@ export const importarEquiposDesdeSheets = createServerFn({ method: "POST" })
     }
 
     return {
-      total: filas.length,
+      total: filasUnicas.length,
       computadoras: computadoras.length,
       telefonos: telefonos.length,
       lineas: lineas.length,
