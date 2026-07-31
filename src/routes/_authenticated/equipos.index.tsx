@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 type Busqueda = { tipo?: TipoEquipo };
 
-export const Route = createFileRoute("/_authenticated/equipos")({
+export const Route = createFileRoute("/_authenticated/equipos/")({
   validateSearch: (search: Record<string, unknown>): Busqueda => {
     const tipo = search["tipo"];
     return typeof tipo === "string" && TIPOS_LISTA.includes(tipo as TipoEquipo)
