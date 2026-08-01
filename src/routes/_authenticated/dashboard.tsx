@@ -2,9 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { RefreshCw, Download } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { sincronizarPersonal, importarEquiposDesdeSheets } from "@/lib/sync.functions";
+import { sincronizarPersonal } from "@/lib/sync.functions";
 import { TIPOS, TIPOS_LISTA, formatearFecha } from "@/lib/tipos";
 import { PageHeader, EstadoBadge } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -26,7 +26,6 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 function Dashboard() {
   const queryClient = useQueryClient();
   const sincronizar = useServerFn(sincronizarPersonal);
-  const importar = useServerFn(importarEquiposDesdeSheets);
 
   const { data: equipos = [] } = useQuery({
     queryKey: ["equipos"],
@@ -72,15 +71,6 @@ function Dashboard() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const imp = useMutation({
-    mutationFn: () => importar(),
-    onSuccess: (r) => {
-      queryClient.invalidateQueries();
-      toast.success(`Importación: ${r.total} equipos (${r.computadoras} PC, ${r.telefonos} tel., ${r.lineas} líneas).`);
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
-
   const total = equipos.length;
   const porEstado = (estado: string) => equipos.filter((e) => e.estado_asignacion === estado).length;
 
@@ -90,10 +80,6 @@ function Dashboard() {
         <Button variant="outline" onClick={() => sync.mutate()} disabled={sync.isPending}>
           <RefreshCw className={sync.isPending ? "size-4 animate-spin" : "size-4"} />
           Sincronizar personal
-        </Button>
-        <Button variant="outline" onClick={() => imp.mutate()} disabled={imp.isPending}>
-          <Download className="size-4" />
-          Importar equipos del Sheets
         </Button>
       </PageHeader>
 

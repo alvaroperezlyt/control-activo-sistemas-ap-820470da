@@ -21,6 +21,7 @@ import { Route as AuthenticatedRecepcionesRouteImport } from './routes/_authenti
 import { Route as AuthenticatedSucursalesRouteImport } from './routes/_authenticated/sucursales'
 import { Route as AuthenticatedEquiposIndexRouteImport } from './routes/_authenticated/equipos.index'
 import { Route as AuthenticatedEquiposIdRouteImport } from './routes/_authenticated/equipos.$id'
+import { Route as ApiPublicHooksSyncPersonalRouteImport } from './routes/api/public/hooks/sync-personal'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -85,6 +86,12 @@ const AuthenticatedEquiposIdRoute = AuthenticatedEquiposIdRouteImport.update({
   path: '/equipos/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicHooksSyncPersonalRoute =
+  ApiPublicHooksSyncPersonalRouteImport.update({
+    id: '/api/public/hooks/sync-personal',
+    path: '/api/public/hooks/sync-personal',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -98,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/sucursales': typeof AuthenticatedSucursalesRoute
   '/equipos/$id': typeof AuthenticatedEquiposIdRoute
   '/equipos/': typeof AuthenticatedEquiposIndexRoute
+  '/api/public/hooks/sync-personal': typeof ApiPublicHooksSyncPersonalRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -111,6 +119,7 @@ export interface FileRoutesByTo {
   '/sucursales': typeof AuthenticatedSucursalesRoute
   '/equipos/$id': typeof AuthenticatedEquiposIdRoute
   '/equipos': typeof AuthenticatedEquiposIndexRoute
+  '/api/public/hooks/sync-personal': typeof ApiPublicHooksSyncPersonalRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -126,6 +135,7 @@ export interface FileRoutesById {
   '/_authenticated/sucursales': typeof AuthenticatedSucursalesRoute
   '/_authenticated/equipos/$id': typeof AuthenticatedEquiposIdRoute
   '/_authenticated/equipos/': typeof AuthenticatedEquiposIndexRoute
+  '/api/public/hooks/sync-personal': typeof ApiPublicHooksSyncPersonalRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/sucursales'
     | '/equipos/$id'
     | '/equipos/'
+    | '/api/public/hooks/sync-personal'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -154,6 +165,7 @@ export interface FileRouteTypes {
     | '/sucursales'
     | '/equipos/$id'
     | '/equipos'
+    | '/api/public/hooks/sync-personal'
   id:
     | '__root__'
     | '/'
@@ -168,12 +180,14 @@ export interface FileRouteTypes {
     | '/_authenticated/sucursales'
     | '/_authenticated/equipos/$id'
     | '/_authenticated/equipos/'
+    | '/api/public/hooks/sync-personal'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiPublicHooksSyncPersonalRoute: typeof ApiPublicHooksSyncPersonalRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -262,6 +276,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedEquiposIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/hooks/sync-personal': {
+      id: '/api/public/hooks/sync-personal'
+      path: '/api/public/hooks/sync-personal'
+      fullPath: '/api/public/hooks/sync-personal'
+      preLoaderRoute: typeof ApiPublicHooksSyncPersonalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -296,6 +317,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiPublicHooksSyncPersonalRoute: ApiPublicHooksSyncPersonalRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
