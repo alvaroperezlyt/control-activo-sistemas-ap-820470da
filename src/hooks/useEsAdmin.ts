@@ -8,7 +8,12 @@ export function useEsAdmin() {
       const { data: userData } = await supabase.auth.getUser();
       const id = userData.user?.id;
       if (!id) return false;
-      const { data, error } = await supabase.rpc("has_role", { _user_id: id, _role: "admin" });
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", id)
+        .eq("role", "admin")
+        .maybeSingle();
       if (error) throw error;
       return Boolean(data);
     },
