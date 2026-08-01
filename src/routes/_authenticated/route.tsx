@@ -6,7 +6,7 @@ import {
   UserCheck,
   Inbox,
   Wrench,
-  Warehouse,
+  Building,
   Users,
   Bell,
   LogOut,
@@ -31,7 +31,7 @@ const enlaces = [
   { to: "/asignaciones", label: "Asignaciones", icon: UserCheck },
   { to: "/recepciones", label: "Recepciones", icon: Inbox },
   { to: "/fallas", label: "Fallas y reparaciones", icon: Wrench },
-  { to: "/almacenes", label: "Almacenes", icon: Warehouse },
+  { to: "/sucursales", label: "Sucursales", icon: Building },
   { to: "/personal", label: "Personal (RRHH)", icon: Users },
 ] as const;
 
