@@ -124,7 +124,9 @@ function Equipos() {
           <Select
             value={tipoFiltro ?? "TODOS"}
             onValueChange={(v) =>
-              navigate({ search: v === "TODOS" ? {} : { tipo: v as TipoEquipo } })
+              navigate({
+                search: (prev) => ({ ...prev, tipo: v === "TODOS" ? undefined : (v as TipoEquipo) }),
+              })
             }
           >
             <SelectTrigger className="w-48">
@@ -135,6 +137,24 @@ function Equipos() {
               {TIPOS_LISTA.map((t) => (
                 <SelectItem key={t} value={t}>
                   {TIPOS[t].label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={almacenFiltro ?? "TODOS"}
+            onValueChange={(v) =>
+              navigate({ search: (prev) => ({ ...prev, almacen: v === "TODOS" ? undefined : v }) })
+            }
+          >
+            <SelectTrigger className="w-60">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="TODOS">Todas las Sucursales/Líneas de Negocio</SelectItem>
+              {sucursales.map((s) => (
+                <SelectItem key={s.id} value={s.id}>
+                  {s.nombre} ({s.lugar})
                 </SelectItem>
               ))}
             </SelectContent>
@@ -152,6 +172,7 @@ function Equipos() {
               ))}
             </SelectContent>
           </Select>
+
         </div>
 
         <div className="mt-4 overflow-x-auto">
