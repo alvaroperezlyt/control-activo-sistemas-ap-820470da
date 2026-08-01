@@ -10,15 +10,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-type Busqueda = { tipo?: TipoEquipo };
+type Busqueda = { tipo?: TipoEquipo; almacen?: string };
 
 export const Route = createFileRoute("/_authenticated/equipos/")({
   validateSearch: (search: Record<string, unknown>): Busqueda => {
     const tipo = search["tipo"];
-    return typeof tipo === "string" && TIPOS_LISTA.includes(tipo as TipoEquipo)
-      ? { tipo: tipo as TipoEquipo }
-      : {};
+    const almacen = search["almacen"];
+    const out: Busqueda = {};
+    if (typeof tipo === "string" && TIPOS_LISTA.includes(tipo as TipoEquipo)) out.tipo = tipo as TipoEquipo;
+    if (typeof almacen === "string" && almacen) out.almacen = almacen;
+    return out;
   },
+
   head: () => ({
     meta: [
       { title: "Equipos | Activos TI" },
