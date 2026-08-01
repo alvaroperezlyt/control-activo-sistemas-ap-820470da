@@ -92,7 +92,7 @@ function DetalleEquipo() {
         <dl className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[
             ["Asignado a", equipo.personal?.nombre ?? "—"],
-            ["Almacén", equipo.almacenes ? `${equipo.almacenes.nombre} (${equipo.almacenes.lugar})` : "—"],
+            ["Sucursal", equipo.almacenes ? `${equipo.almacenes.nombre} (${equipo.almacenes.lugar})` : "—"],
             ["Lugar", equipo.lugar ?? "—"],
             ["Serie", equipo.serie ?? "—"],
             ["Fecha de compra", formatearFecha(equipo.fecha_compra)],
