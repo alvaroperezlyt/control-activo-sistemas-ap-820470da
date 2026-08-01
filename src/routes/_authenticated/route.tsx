@@ -9,11 +9,13 @@ import {
   Building,
   Users,
   Bell,
+  ShieldCheck,
   LogOut,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useEsAdmin } from "@/hooks/useEsAdmin";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -36,6 +38,7 @@ const enlaces = [
 ] as const;
 
 function Shell() {
+  const { esAdmin } = useEsAdmin();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -78,6 +81,16 @@ function Shell() {
               {label}
             </Link>
           ))}
+          {esAdmin && (
+            <Link
+              to="/usuarios"
+              className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-sidebar-foreground/80 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              activeProps={{ className: "bg-sidebar-accent text-sidebar-accent-foreground font-medium" }}
+            >
+              <ShieldCheck className="size-4" />
+              Usuarios y roles
+            </Link>
+          )}
           <Link
             to="/notificaciones"
             className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-sidebar-foreground/80 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
@@ -106,7 +119,11 @@ function Shell() {
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center gap-2 overflow-x-auto border-b border-border bg-card px-4 py-2 md:hidden">
-          {[...enlaces, { to: "/notificaciones", label: "Avisos", icon: Bell } as const].map(
+          {[
+            ...enlaces,
+            ...(esAdmin ? [{ to: "/usuarios", label: "Usuarios", icon: ShieldCheck } as const] : []),
+            { to: "/notificaciones", label: "Avisos", icon: Bell } as const,
+          ].map(
             ({ to, label }) => (
               <Link
                 key={to}

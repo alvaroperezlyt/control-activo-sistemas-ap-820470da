@@ -471,6 +471,36 @@ export type Database = {
         }
         Relationships: []
       }
+      usuarios_autorizados: {
+        Row: {
+          creado_por: string | null
+          created_at: string
+          email: string
+          id: string
+          nombre: string
+          rol: Database["public"]["Enums"]["app_role"]
+          updated_at: string
+        }
+        Insert: {
+          creado_por?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          nombre: string
+          rol?: Database["public"]["Enums"]["app_role"]
+          updated_at?: string
+        }
+        Update: {
+          creado_por?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          nombre?: string
+          rol?: Database["public"]["Enums"]["app_role"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
