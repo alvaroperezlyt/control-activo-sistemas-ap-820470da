@@ -38,25 +38,6 @@ function texto(valor: string | undefined): string | null {
   return limpio === "" || limpio.toUpperCase() === "NA" ? null : limpio;
 }
 
-function fechaISO(valor: string | undefined): string | null {
-  const v = (valor ?? "").trim();
-  if (!v) return null;
-  const m = v.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);
-  if (m) {
-    const [, d, mes, a] = m;
-    return `${a}-${mes!.padStart(2, "0")}-${d!.padStart(2, "0")}`;
-  }
-  if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
-  return null;
-}
-
-function numero(valor: string | undefined): number | null {
-  const v = (valor ?? "").replace(/[^\d.,-]/g, "").replace(",", ".");
-  if (!v) return null;
-  const n = Number(v);
-  return Number.isFinite(n) ? n : null;
-}
-
 export type PersonalSheet = { codigo: string; nombre: string; puesto: string | null; estado: string };
 
 export async function leerPersonal(): Promise<PersonalSheet[]> {
