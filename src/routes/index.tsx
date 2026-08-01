@@ -26,7 +26,7 @@ export const Route = createFileRoute("/")({
 const bloques = [
   { icon: Laptop, titulo: "Ingresos", texto: "Registra computadoras, impresoras y más con sus campos técnicos." },
   { icon: Smartphone, titulo: "Asignaciones", texto: "Entrega equipos a personal y controla ASIGNADO, LIBRE y BAJA." },
-  { icon: Building, titulo: "Sucursales", texto: "Define sucursales con nombre y lugar para ubicar cada activo." },
+  { icon: Building, titulo: "Sucursales / Líneas de Negocio", texto: "Define sucursales o líneas de negocio con nombre y lugar para ubicar cada activo." },
   { icon: Printer, titulo: "Recepciones", texto: "Formularios de devolución con estado y observaciones." },
   { icon: Network, titulo: "Fallas y reparaciones", texto: "Proveedor, costo y factura por cada intervención." },
   { icon: BellRing, titulo: "Avisos de RRHH", texto: "Alerta automática cuando alguien pasa a DESVINCULADO." },

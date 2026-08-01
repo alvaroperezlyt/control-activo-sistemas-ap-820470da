@@ -31,7 +31,7 @@ const enlaces = [
   { to: "/asignaciones", label: "Asignaciones", icon: UserCheck },
   { to: "/recepciones", label: "Recepciones", icon: Inbox },
   { to: "/fallas", label: "Fallas y reparaciones", icon: Wrench },
-  { to: "/sucursales", label: "Sucursales", icon: Building },
+  { to: "/sucursales", label: "Sucursales / Líneas de Negocio", icon: Building },
   { to: "/personal", label: "Personal (RRHH)", icon: Users },
 ] as const;
 
