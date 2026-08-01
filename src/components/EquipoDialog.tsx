@@ -195,7 +195,7 @@ export function EquipoDialog({
           ))}
 
           <div className="space-y-2">
-            <Label htmlFor="almacen">Sucursal</Label>
+            <Label htmlFor="almacen">Sucursal/Línea de Negocio</Label>
             <Select value={almacenId} onValueChange={setAlmacenId}>
               <SelectTrigger id="almacen">
                 <SelectValue placeholder="Sin sucursal" />

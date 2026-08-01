@@ -10,15 +10,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-type Busqueda = { tipo?: TipoEquipo };
+type Busqueda = { tipo?: TipoEquipo; almacen?: string };
 
 export const Route = createFileRoute("/_authenticated/equipos/")({
   validateSearch: (search: Record<string, unknown>): Busqueda => {
     const tipo = search["tipo"];
-    return typeof tipo === "string" && TIPOS_LISTA.includes(tipo as TipoEquipo)
-      ? { tipo: tipo as TipoEquipo }
-      : {};
+    const almacen = search["almacen"];
+    const out: Busqueda = {};
+    if (typeof tipo === "string" && TIPOS_LISTA.includes(tipo as TipoEquipo)) out.tipo = tipo as TipoEquipo;
+    if (typeof almacen === "string" && almacen) out.almacen = almacen;
+    return out;
   },
+
   head: () => ({
     meta: [
       { title: "Equipos | Activos TI" },
@@ -36,7 +39,7 @@ export const Route = createFileRoute("/_authenticated/equipos/")({
 });
 
 function Equipos() {
-  const { tipo: tipoFiltro } = Route.useSearch();
+  const { tipo: tipoFiltro, almacen: almacenFiltro } = Route.useSearch();
   const navigate = Route.useNavigate();
   const [texto, setTexto] = useState("");
   const [estado, setEstado] = useState<string>("TODOS");
@@ -58,17 +61,28 @@ function Equipos() {
     },
   });
 
+  const { data: sucursales = [] } = useQuery({
+    queryKey: ["sucursales", "lista"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("almacenes").select("id, nombre, lugar").order("nombre");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
   const filtrados = useMemo(() => {
     const q = texto.trim().toLowerCase();
     return equipos.filter((e) => {
       if (tipoFiltro && e.tipo !== tipoFiltro) return false;
+      if (almacenFiltro && e.almacen_id !== almacenFiltro) return false;
       if (estado !== "TODOS" && e.estado_asignacion !== estado) return false;
       if (!q) return true;
       return [e.codigo_interno, e.marca, e.modelo, e.serie, e.personal?.nombre, e.lugar]
         .filter(Boolean)
         .some((v) => String(v).toLowerCase().includes(q));
     });
-  }, [equipos, texto, estado, tipoFiltro]);
+  }, [equipos, texto, estado, tipoFiltro, almacenFiltro]);
+
 
   return (
     <div className="mx-auto max-w-6xl">
@@ -110,7 +124,9 @@ function Equipos() {
           <Select
             value={tipoFiltro ?? "TODOS"}
             onValueChange={(v) =>
-              navigate({ search: v === "TODOS" ? {} : { tipo: v as TipoEquipo } })
+              navigate({
+                search: (prev: Busqueda) => ({ ...prev, tipo: v === "TODOS" ? undefined : (v as TipoEquipo) }),
+              })
             }
           >
             <SelectTrigger className="w-48">
@@ -121,6 +137,24 @@ function Equipos() {
               {TIPOS_LISTA.map((t) => (
                 <SelectItem key={t} value={t}>
                   {TIPOS[t].label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={almacenFiltro ?? "TODOS"}
+            onValueChange={(v) =>
+              navigate({ search: (prev: Busqueda) => ({ ...prev, almacen: v === "TODOS" ? undefined : v }) })
+            }
+          >
+            <SelectTrigger className="w-60">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="TODOS">Todas las Sucursales/Líneas de Negocio</SelectItem>
+              {sucursales.map((s) => (
+                <SelectItem key={s.id} value={s.id}>
+                  {s.nombre} ({s.lugar})
                 </SelectItem>
               ))}
             </SelectContent>
@@ -138,6 +172,7 @@ function Equipos() {
               ))}
             </SelectContent>
           </Select>
+
         </div>
 
         <div className="mt-4 overflow-x-auto">
@@ -148,7 +183,7 @@ function Equipos() {
                 <th className="pb-2 font-medium text-muted-foreground">Tipo</th>
                 <th className="pb-2 font-medium text-muted-foreground">Marca / Modelo</th>
                 <th className="pb-2 font-medium text-muted-foreground">Asignado a</th>
-                <th className="pb-2 font-medium text-muted-foreground">Sucursal</th>
+                <th className="pb-2 font-medium text-muted-foreground">Sucursal/Línea de Negocio</th>
                 <th className="pb-2 font-medium text-muted-foreground">Estado</th>
                 <th className="pb-2" />
               </tr>
