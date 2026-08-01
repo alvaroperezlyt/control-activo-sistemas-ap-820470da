@@ -39,7 +39,7 @@ export const Route = createFileRoute("/_authenticated/equipos/")({
 });
 
 function Equipos() {
-  const { tipo: tipoFiltro } = Route.useSearch();
+  const { tipo: tipoFiltro, almacen: almacenFiltro } = Route.useSearch();
   const navigate = Route.useNavigate();
   const [texto, setTexto] = useState("");
   const [estado, setEstado] = useState<string>("TODOS");
@@ -61,17 +61,28 @@ function Equipos() {
     },
   });
 
+  const { data: sucursales = [] } = useQuery({
+    queryKey: ["sucursales", "lista"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("almacenes").select("id, nombre, lugar").order("nombre");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
   const filtrados = useMemo(() => {
     const q = texto.trim().toLowerCase();
     return equipos.filter((e) => {
       if (tipoFiltro && e.tipo !== tipoFiltro) return false;
+      if (almacenFiltro && e.almacen_id !== almacenFiltro) return false;
       if (estado !== "TODOS" && e.estado_asignacion !== estado) return false;
       if (!q) return true;
       return [e.codigo_interno, e.marca, e.modelo, e.serie, e.personal?.nombre, e.lugar]
         .filter(Boolean)
         .some((v) => String(v).toLowerCase().includes(q));
     });
-  }, [equipos, texto, estado, tipoFiltro]);
+  }, [equipos, texto, estado, tipoFiltro, almacenFiltro]);
+
 
   return (
     <div className="mx-auto max-w-6xl">
