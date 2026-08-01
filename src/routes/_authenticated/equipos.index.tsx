@@ -148,7 +148,7 @@ function Equipos() {
                 <th className="pb-2 font-medium text-muted-foreground">Tipo</th>
                 <th className="pb-2 font-medium text-muted-foreground">Marca / Modelo</th>
                 <th className="pb-2 font-medium text-muted-foreground">Asignado a</th>
-                <th className="pb-2 font-medium text-muted-foreground">Almacén</th>
+                <th className="pb-2 font-medium text-muted-foreground">Sucursal</th>
                 <th className="pb-2 font-medium text-muted-foreground">Estado</th>
                 <th className="pb-2" />
               </tr>

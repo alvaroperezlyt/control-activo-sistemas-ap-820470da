@@ -82,7 +82,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Sistema de registro y control de activos informáticos: ingresos, asignaciones, almacenes, recepciones y reparaciones.",
+          "Sistema de registro y control de activos informáticos: ingresos, asignaciones, sucursales, recepciones y reparaciones.",
       },
       { property: "og:title", content: "Activos TI · Control de activos informáticos" },
       {
