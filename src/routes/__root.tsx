@@ -78,20 +78,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Activos TI · Control de activos informáticos" },
+      { title: "Activos TI · Registro y control de equipos" },
       {
         name: "description",
         content:
-          "Sistema de registro y control de activos informáticos: ingresos, asignaciones, sucursales, recepciones y reparaciones.",
+          "Sistema de registro y control de activos informáticos: ingresos, asignaciones, sucursales, recepciones, fallas y reparaciones.",
       },
-      { property: "og:title", content: "Activos TI · Control de activos informáticos" },
+      { property: "og:title", content: "Activos TI · Registro y control de equipos" },
       {
         property: "og:description",
-        content: "Registro, asignación y mantenimiento de equipos de tecnología.",
+        content: "Sistema de registro y control de activos informáticos: ingresos, asignaciones, sucursales, recepciones, fallas y reparaciones.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Activos TI · Registro y control de equipos" },
+      { name: "twitter:description", content: "Sistema de registro y control de activos informáticos: ingresos, asignaciones, sucursales, recepciones, fallas y reparaciones." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f6a2148e-b285-43f5-884d-7984b9f88c29/id-preview-5458e15d--b44e777b-e56b-4db2-9d58-f739943fa959.lovable.app-1785598742759.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f6a2148e-b285-43f5-884d-7984b9f88c29/id-preview-5458e15d--b44e777b-e56b-4db2-9d58-f739943fa959.lovable.app-1785598742759.png" },
     ],
     links: [
       {

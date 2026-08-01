@@ -14,7 +14,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Activos TI · Registro y control de equipos" },
       {
         property: "og:description",
-        content: "Controla computadoras, teléfonos, impresoras, líneas y dispositivos de red en un solo lugar.",
+        content: "Sistema de registro y control de activos informáticos: ingresos, asignaciones, sucursales, recepciones, fallas y reparaciones.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
