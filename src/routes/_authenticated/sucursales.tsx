@@ -19,25 +19,25 @@ import {
 export const Route = createFileRoute("/_authenticated/sucursales")({
   head: () => ({
     meta: [
-      { title: "Almacenes | Activos TI" },
-      { name: "description", content: "Creación y consulta de almacenes con nombre y lugar." },
-      { property: "og:title", content: "Almacenes | Activos TI" },
-      { property: "og:description", content: "Administra los almacenes donde se resguardan los equipos." },
+      { title: "Sucursales | Activos TI" },
+      { name: "description", content: "Creación y consulta de sucursales con nombre y lugar." },
+      { property: "og:title", content: "Sucursales | Activos TI" },
+      { property: "og:description", content: "Administra las sucursales donde se ubican los equipos." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: Almacenes,
+  component: Sucursales,
 });
 
-function Almacenes() {
+function Sucursales() {
   const queryClient = useQueryClient();
   const [abierto, setAbierto] = useState(false);
   const [nombre, setNombre] = useState("");
   const [lugar, setLugar] = useState("");
 
-  const { data: almacenes = [] } = useQuery({
-    queryKey: ["almacenes", "detalle"],
+  const { data: sucursales = [] } = useQuery({
+    queryKey: ["sucursales", "detalle"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("almacenes")
@@ -56,8 +56,8 @@ function Almacenes() {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["almacenes"] });
-      toast.success("Almacén creado");
+      queryClient.invalidateQueries({ queryKey: ["sucursales"] });
+      toast.success("Sucursal creada");
       setNombre("");
       setLugar("");
       setAbierto(false);
@@ -67,18 +67,18 @@ function Almacenes() {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <PageHeader titulo="Almacenes" descripcion="Ubicaciones donde se resguardan los equipos libres o de baja.">
+      <PageHeader titulo="Sucursales" descripcion="Ubicaciones donde se ubican los equipos libres o de baja.">
         <Button onClick={() => setAbierto(true)}>
           <Plus className="size-4" />
-          Nuevo almacén
+          Nueva sucursal
         </Button>
       </PageHeader>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        {almacenes.length === 0 && (
-          <p className="text-sm text-muted-foreground">Todavía no hay almacenes registrados.</p>
+        {sucursales.length === 0 && (
+          <p className="text-sm text-muted-foreground">Todavía no hay sucursales registradas.</p>
         )}
-        {almacenes.map((a) => (
+        {sucursales.map((a) => (
           <div key={a.id} className="panel p-5">
             <p className="label-mono">{a.lugar}</p>
             <h2 className="mt-1 font-semibold">{a.nombre}</h2>
@@ -92,7 +92,7 @@ function Almacenes() {
       <Dialog open={abierto} onOpenChange={setAbierto}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Nuevo almacén</DialogTitle>
+            <DialogTitle>Nueva sucursal</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
