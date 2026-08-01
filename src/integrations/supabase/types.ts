@@ -311,11 +311,15 @@ export type Database = {
           created_at: string
           estado_fisico: string | null
           fecha: string
+          formulario: string | null
+          fotos: Json
           id: string
           observaciones: string | null
           personal_codigo: string | null
           personal_nombre: string | null
           recibido_por: string | null
+          respuestas: Json
+          revisor: string | null
           tipo: string
           updated_at: string
         }
@@ -324,11 +328,15 @@ export type Database = {
           created_at?: string
           estado_fisico?: string | null
           fecha?: string
+          formulario?: string | null
+          fotos?: Json
           id?: string
           observaciones?: string | null
           personal_codigo?: string | null
           personal_nombre?: string | null
           recibido_por?: string | null
+          respuestas?: Json
+          revisor?: string | null
           tipo: string
           updated_at?: string
         }
@@ -337,11 +345,15 @@ export type Database = {
           created_at?: string
           estado_fisico?: string | null
           fecha?: string
+          formulario?: string | null
+          fotos?: Json
           id?: string
           observaciones?: string | null
           personal_codigo?: string | null
           personal_nombre?: string | null
           recibido_por?: string | null
+          respuestas?: Json
+          revisor?: string | null
           tipo?: string
           updated_at?: string
         }
