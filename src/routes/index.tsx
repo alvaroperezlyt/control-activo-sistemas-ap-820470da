@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Laptop, Smartphone, Printer, Network, Warehouse, BellRing } from "lucide-react";
+import { Laptop, Smartphone, Printer, Network, Building, BellRing } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
@@ -9,7 +9,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Sistema de registro y control de activos informáticos: ingresos, asignaciones, almacenes, recepciones, fallas y reparaciones.",
+          "Sistema de registro y control de activos informáticos: ingresos, asignaciones, sucursales, recepciones, fallas y reparaciones.",
       },
       { property: "og:title", content: "Activos TI · Registro y control de equipos" },
       {
@@ -26,7 +26,7 @@ export const Route = createFileRoute("/")({
 const bloques = [
   { icon: Laptop, titulo: "Ingresos", texto: "Registra computadoras, impresoras y más con sus campos técnicos." },
   { icon: Smartphone, titulo: "Asignaciones", texto: "Entrega equipos a personal y controla ASIGNADO, LIBRE y BAJA." },
-  { icon: Warehouse, titulo: "Almacenes", texto: "Define almacenes con nombre y lugar para ubicar cada activo." },
+  { icon: Building, titulo: "Sucursales", texto: "Define sucursales con nombre y lugar para ubicar cada activo." },
   { icon: Printer, titulo: "Recepciones", texto: "Formularios de devolución con estado y observaciones." },
   { icon: Network, titulo: "Fallas y reparaciones", texto: "Proveedor, costo y factura por cada intervención." },
   { icon: BellRing, titulo: "Avisos de RRHH", texto: "Alerta automática cuando alguien pasa a DESVINCULADO." },
