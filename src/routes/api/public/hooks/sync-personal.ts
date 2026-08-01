@@ -8,7 +8,11 @@ export const Route = createFileRoute("/api/public/hooks/sync-personal")({
         const apikey =
           request.headers.get("apikey") ??
           request.headers.get("authorization")?.replace("Bearer ", "");
-        if (!apikey || apikey !== process.env["SUPABASE_ANON_KEY"]) {
+        const permitidas = [
+          process.env["SUPABASE_ANON_KEY"],
+          process.env["SUPABASE_PUBLISHABLE_KEY"],
+        ].filter(Boolean);
+        if (!apikey || !permitidas.includes(apikey)) {
           return new Response(JSON.stringify({ error: "No autorizado" }), {
             status: 401,
             headers: { "Content-Type": "application/json" },
