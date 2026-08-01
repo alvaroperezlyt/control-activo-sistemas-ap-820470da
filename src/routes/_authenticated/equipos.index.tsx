@@ -125,7 +125,7 @@ function Equipos() {
             value={tipoFiltro ?? "TODOS"}
             onValueChange={(v) =>
               navigate({
-                search: (prev) => ({ ...prev, tipo: v === "TODOS" ? undefined : (v as TipoEquipo) }),
+                search: (prev: Busqueda) => ({ ...prev, tipo: v === "TODOS" ? undefined : (v as TipoEquipo) }),
               })
             }
           >
@@ -144,7 +144,7 @@ function Equipos() {
           <Select
             value={almacenFiltro ?? "TODOS"}
             onValueChange={(v) =>
-              navigate({ search: (prev) => ({ ...prev, almacen: v === "TODOS" ? undefined : v }) })
+              navigate({ search: (prev: Busqueda) => ({ ...prev, almacen: v === "TODOS" ? undefined : v }) })
             }
           >
             <SelectTrigger className="w-60">
