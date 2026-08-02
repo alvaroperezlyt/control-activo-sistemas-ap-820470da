@@ -185,10 +185,6 @@ export function generarPlanPDF(plan: PlanPDF, items: ItemPlan[], logo?: string |
 
   const total = diasDelMes(plan.anio, plan.mes);
   const dias = Array.from({ length: total }, (_, k) => k + 1);
-  const feriadosOcupados = new Set(items.map((i) => i.fecha));
-  const noLaborable = (d: number) =>
-    diaSemana(plan.anio, plan.mes, d) === 0 ||
-    (!feriadosOcupados.has(iso(plan.anio, plan.mes, d)) && diaSemana(plan.anio, plan.mes, d) === 0);
 
   const marca = plan.tipo === "RESPALDO" ? null : "x";
   const anchoNombre = 68;
