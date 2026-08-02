@@ -17,6 +17,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedFallasRouteImport } from './routes/_authenticated/fallas'
 import { Route as AuthenticatedNotificacionesRouteImport } from './routes/_authenticated/notificaciones'
 import { Route as AuthenticatedPersonalRouteImport } from './routes/_authenticated/personal'
+import { Route as AuthenticatedPlanesRouteImport } from './routes/_authenticated/planes'
 import { Route as AuthenticatedRecepcionesRouteImport } from './routes/_authenticated/recepciones'
 import { Route as AuthenticatedSucursalesRouteImport } from './routes/_authenticated/sucursales'
 import { Route as AuthenticatedUsuariosRouteImport } from './routes/_authenticated/usuarios'
@@ -65,6 +66,11 @@ const AuthenticatedPersonalRoute = AuthenticatedPersonalRouteImport.update({
   path: '/personal',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPlanesRoute = AuthenticatedPlanesRouteImport.update({
+  id: '/planes',
+  path: '/planes',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedRecepcionesRoute =
   AuthenticatedRecepcionesRouteImport.update({
     id: '/recepciones',
@@ -107,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/fallas': typeof AuthenticatedFallasRoute
   '/notificaciones': typeof AuthenticatedNotificacionesRoute
   '/personal': typeof AuthenticatedPersonalRoute
+  '/planes': typeof AuthenticatedPlanesRoute
   '/recepciones': typeof AuthenticatedRecepcionesRoute
   '/sucursales': typeof AuthenticatedSucursalesRoute
   '/usuarios': typeof AuthenticatedUsuariosRoute
@@ -122,6 +129,7 @@ export interface FileRoutesByTo {
   '/fallas': typeof AuthenticatedFallasRoute
   '/notificaciones': typeof AuthenticatedNotificacionesRoute
   '/personal': typeof AuthenticatedPersonalRoute
+  '/planes': typeof AuthenticatedPlanesRoute
   '/recepciones': typeof AuthenticatedRecepcionesRoute
   '/sucursales': typeof AuthenticatedSucursalesRoute
   '/usuarios': typeof AuthenticatedUsuariosRoute
@@ -139,6 +147,7 @@ export interface FileRoutesById {
   '/_authenticated/fallas': typeof AuthenticatedFallasRoute
   '/_authenticated/notificaciones': typeof AuthenticatedNotificacionesRoute
   '/_authenticated/personal': typeof AuthenticatedPersonalRoute
+  '/_authenticated/planes': typeof AuthenticatedPlanesRoute
   '/_authenticated/recepciones': typeof AuthenticatedRecepcionesRoute
   '/_authenticated/sucursales': typeof AuthenticatedSucursalesRoute
   '/_authenticated/usuarios': typeof AuthenticatedUsuariosRoute
@@ -156,6 +165,7 @@ export interface FileRouteTypes {
     | '/fallas'
     | '/notificaciones'
     | '/personal'
+    | '/planes'
     | '/recepciones'
     | '/sucursales'
     | '/usuarios'
@@ -171,6 +181,7 @@ export interface FileRouteTypes {
     | '/fallas'
     | '/notificaciones'
     | '/personal'
+    | '/planes'
     | '/recepciones'
     | '/sucursales'
     | '/usuarios'
@@ -187,6 +198,7 @@ export interface FileRouteTypes {
     | '/_authenticated/fallas'
     | '/_authenticated/notificaciones'
     | '/_authenticated/personal'
+    | '/_authenticated/planes'
     | '/_authenticated/recepciones'
     | '/_authenticated/sucursales'
     | '/_authenticated/usuarios'
@@ -260,6 +272,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPersonalRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/planes': {
+      id: '/_authenticated/planes'
+      path: '/planes'
+      fullPath: '/planes'
+      preLoaderRoute: typeof AuthenticatedPlanesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/recepciones': {
       id: '/_authenticated/recepciones'
       path: '/recepciones'
@@ -311,6 +330,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedFallasRoute: typeof AuthenticatedFallasRoute
   AuthenticatedNotificacionesRoute: typeof AuthenticatedNotificacionesRoute
   AuthenticatedPersonalRoute: typeof AuthenticatedPersonalRoute
+  AuthenticatedPlanesRoute: typeof AuthenticatedPlanesRoute
   AuthenticatedRecepcionesRoute: typeof AuthenticatedRecepcionesRoute
   AuthenticatedSucursalesRoute: typeof AuthenticatedSucursalesRoute
   AuthenticatedUsuariosRoute: typeof AuthenticatedUsuariosRoute
@@ -324,6 +344,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedFallasRoute: AuthenticatedFallasRoute,
   AuthenticatedNotificacionesRoute: AuthenticatedNotificacionesRoute,
   AuthenticatedPersonalRoute: AuthenticatedPersonalRoute,
+  AuthenticatedPlanesRoute: AuthenticatedPlanesRoute,
   AuthenticatedRecepcionesRoute: AuthenticatedRecepcionesRoute,
   AuthenticatedSucursalesRoute: AuthenticatedSucursalesRoute,
   AuthenticatedUsuariosRoute: AuthenticatedUsuariosRoute,
@@ -343,13 +364,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
