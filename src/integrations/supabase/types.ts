@@ -215,6 +215,30 @@ export type Database = {
           },
         ]
       }
+      feriados: {
+        Row: {
+          created_at: string
+          descripcion: string
+          fecha: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          descripcion: string
+          fecha: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          descripcion?: string
+          fecha?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notificaciones: {
         Row: {
           created_at: string
@@ -277,6 +301,120 @@ export type Database = {
           nombre?: string
           puesto?: string | null
           synced_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      plan_items: {
+        Row: {
+          codigo_interno: string
+          created_at: string
+          equipo_id: string | null
+          fecha: string
+          id: string
+          lugar: string | null
+          orden: number
+          personal_nombre: string
+          plan_id: string
+          sucursal_nombre: string | null
+          turno: string
+          updated_at: string
+        }
+        Insert: {
+          codigo_interno: string
+          created_at?: string
+          equipo_id?: string | null
+          fecha: string
+          id?: string
+          lugar?: string | null
+          orden?: number
+          personal_nombre: string
+          plan_id: string
+          sucursal_nombre?: string | null
+          turno?: string
+          updated_at?: string
+        }
+        Update: {
+          codigo_interno?: string
+          created_at?: string
+          equipo_id?: string | null
+          fecha?: string
+          id?: string
+          lugar?: string | null
+          orden?: number
+          personal_nombre?: string
+          plan_id?: string
+          sucursal_nombre?: string | null
+          turno?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_items_equipo_id_fkey"
+            columns: ["equipo_id"]
+            isOneToOne: false
+            referencedRelation: "equipos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plan_items_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "planes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      planes: {
+        Row: {
+          alcance: string
+          anio: number
+          autoriza: string
+          created_at: string
+          elabora: string
+          fecha_elaboracion: string
+          fecha_realizacion: string
+          id: string
+          mes: number
+          nota: string | null
+          numero: number
+          objetivo: string
+          recursos: string
+          tipo: string
+          updated_at: string
+        }
+        Insert: {
+          alcance?: string
+          anio: number
+          autoriza?: string
+          created_at?: string
+          elabora?: string
+          fecha_elaboracion?: string
+          fecha_realizacion?: string
+          id?: string
+          mes: number
+          nota?: string | null
+          numero?: number
+          objetivo?: string
+          recursos?: string
+          tipo: string
+          updated_at?: string
+        }
+        Update: {
+          alcance?: string
+          anio?: number
+          autoriza?: string
+          created_at?: string
+          elabora?: string
+          fecha_elaboracion?: string
+          fecha_realizacion?: string
+          id?: string
+          mes?: number
+          nota?: string | null
+          numero?: number
+          objetivo?: string
+          recursos?: string
+          tipo?: string
           updated_at?: string
         }
         Relationships: []
