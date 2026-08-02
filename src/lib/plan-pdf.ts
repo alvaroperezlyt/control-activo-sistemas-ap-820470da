@@ -1,4 +1,5 @@
 import jsPDF from "jspdf";
+import { LOGO_EMPRESA } from "@/assets/logo-empresa";
 import autoTable from "jspdf-autotable";
 import {
   AMARILLO,
@@ -56,11 +57,17 @@ function cabecera(doc: jsPDF, plan: PlanPDF, ancho: number, logo?: string | null
 
   if (logo) {
     try {
-      doc.addImage(logo, "PNG", x + 2, y + 1.5, colLogo - 4, alto - 3, undefined, "FAST");
+      // El logo es 500x250 (2:1): se ajusta sin deformarlo y se centra en la celda.
+      const maxW = colLogo - 4;
+      const maxH = alto - 3;
+      const w = Math.min(maxW, maxH * 2);
+      const h = w / 2;
+      doc.addImage(logo, "PNG", x + (colLogo - w) / 2, y + (alto - h) / 2, w, h, undefined, "FAST");
     } catch {
       /* logo opcional */
     }
   }
+
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(7.5);
@@ -93,7 +100,7 @@ export function generarPlanPDF(
   plan: PlanPDF,
   items: ItemPlan[],
   feriados: string[] = [],
-  logo?: string | null,
+  logo: string | null = LOGO_EMPRESA,
 ) {
   const setFeriados = new Set(feriados);
   const cfg = CONFIG_PLAN[plan.tipo];
