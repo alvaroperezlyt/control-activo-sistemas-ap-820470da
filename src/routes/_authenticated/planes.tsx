@@ -416,7 +416,12 @@ function DetallePlan({ id, onClose }: { id: string; onClose: () => void }) {
       ]);
       if (error) throw error;
       if (e2) throw e2;
-      return { plan: plan as PlanRow, items: (items ?? []) as unknown as ItemRow[] };
+      const { data: fer } = await supabase.from("feriados").select("fecha");
+      return {
+        plan: plan as PlanRow,
+        items: (items ?? []) as unknown as ItemRow[],
+        feriados: (fer ?? []).map((f) => f.fecha),
+      };
     },
   });
 
@@ -571,6 +576,7 @@ function DetallePlan({ id, onClose }: { id: string; onClose: () => void }) {
                     turno: i.turno,
                     orden: i.orden,
                   })),
+                data?.feriados ?? [],
               )
             }
           >
