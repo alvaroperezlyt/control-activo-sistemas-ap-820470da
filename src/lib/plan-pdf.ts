@@ -89,7 +89,13 @@ function cabecera(doc: jsPDF, plan: PlanPDF, ancho: number, logo?: string | null
   return y + alto;
 }
 
-export function generarPlanPDF(plan: PlanPDF, items: ItemPlan[], logo?: string | null) {
+export function generarPlanPDF(
+  plan: PlanPDF,
+  items: ItemPlan[],
+  feriados: string[] = [],
+  logo?: string | null,
+) {
+  const setFeriados = new Set(feriados);
   const cfg = CONFIG_PLAN[plan.tipo];
   const doc = new jsPDF({ unit: "mm", format: "letter", orientation: "portrait" });
   const anchoP = doc.internal.pageSize.getWidth();
@@ -242,8 +248,7 @@ export function generarPlanPDF(plan: PlanPDF, items: ItemPlan[], logo?: string |
       const dia = col - 1;
       const fecha = iso(plan.anio, plan.mes, dia);
       const dow = diaSemana(plan.anio, plan.mes, dia);
-      const esFeriado = dow === 0 || (!items.some((i) => i.fecha === fecha) && esDiaExcluido(items, fecha, dow));
-      if (dow === 0 || esFeriado) {
+      if (dow === 0 || setFeriados.has(fecha)) {
         data.cell.styles.fillColor = GRIS_NO_LABORABLE;
         return;
       }
@@ -274,13 +279,3 @@ export function generarPlanPDF(plan: PlanPDF, items: ItemPlan[], logo?: string |
   doc.save(nombre);
 }
 
-/** Un día sin equipos programados y que no es sábado/laboral se pinta como feriado */
-function esDiaExcluido(items: ItemPlan[], fecha: string, dow: number) {
-  if (dow === 0) return true;
-  if (items.length === 0) return false;
-  const fechas = items.map((i) => i.fecha).sort();
-  const min = fechas[0]!;
-  const max = fechas[fechas.length - 1]!;
-  if (fecha < min || fecha > max) return false;
-  return !items.some((i) => i.fecha === fecha);
-}
