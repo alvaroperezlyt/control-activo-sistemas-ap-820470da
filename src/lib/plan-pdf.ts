@@ -1,4 +1,5 @@
 import jsPDF from "jspdf";
+import { LOGO_EMPRESA } from "@/assets/logo-empresa";
 import autoTable from "jspdf-autotable";
 import {
   AMARILLO,
@@ -93,7 +94,7 @@ export function generarPlanPDF(
   plan: PlanPDF,
   items: ItemPlan[],
   feriados: string[] = [],
-  logo?: string | null,
+  logo: string | null = LOGO_EMPRESA,
 ) {
   const setFeriados = new Set(feriados);
   const cfg = CONFIG_PLAN[plan.tipo];
