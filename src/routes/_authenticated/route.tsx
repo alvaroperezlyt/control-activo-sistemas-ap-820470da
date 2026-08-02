@@ -34,7 +34,9 @@ const enlaces = [
   { to: "/recepciones", label: "Recepciones", icon: Inbox },
   { to: "/fallas", label: "Fallas y reparaciones", icon: Wrench },
   { to: "/sucursales", label: "Sucursales / Líneas de Negocio", icon: Building },
+  { to: "/planes", label: "Planes y mantenimiento", icon: CalendarCheck },
   { to: "/personal", label: "Personal (RRHH)", icon: Users },
+
 ] as const;
 
 function Shell() {
