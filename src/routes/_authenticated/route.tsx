@@ -7,6 +7,8 @@ import {
   Inbox,
   Wrench,
   Building,
+  CalendarCheck,
+
   Users,
   Bell,
   ShieldCheck,
