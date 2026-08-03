@@ -133,15 +133,16 @@ function Planes() {
     },
   });
 
-  const feriadosDelMes = useMemo(
-    () => feriados.filter((f) => f.fecha.startsWith(`${anio}-${String(mes).padStart(2, "0")}`)).map((f) => f.fecha),
-    [feriados, anio, mes],
+  const feriadosRango = useMemo(
+    () => feriados.filter((f) => f.fecha >= desde && f.fecha <= hasta).map((f) => f.fecha),
+    [feriados, desde, hasta],
   );
 
   const previa = useMemo(
-    () => distribuir(computadoras, anio, mes, feriadosDelMes),
-    [computadoras, anio, mes, feriadosDelMes],
+    () => distribuir(computadoras, desde, hasta, feriadosRango),
+    [computadoras, desde, hasta, feriadosRango],
   );
+
 
   const crear = useMutation({
     mutationFn: async () => {
