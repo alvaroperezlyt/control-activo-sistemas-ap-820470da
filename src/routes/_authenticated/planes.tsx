@@ -365,7 +365,7 @@ function Planes() {
             <div className="grid grid-cols-3 gap-3">
               <div className="grid gap-1.5">
                 <Label>Mes</Label>
-                <Select value={String(mes)} onValueChange={(v) => setMes(Number(v))}>
+                <Select value={String(mes)} onValueChange={(v) => cambiarPeriodo(anio, Number(v))}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -381,21 +381,38 @@ function Planes() {
               </div>
               <div className="grid gap-1.5">
                 <Label>Año</Label>
-                <Input type="number" value={anio} onChange={(e) => setAnio(Number(e.target.value))} />
+                <Input
+                  type="number"
+                  value={anio}
+                  onChange={(e) => cambiarPeriodo(Number(e.target.value), mes)}
+                />
               </div>
               <div className="grid gap-1.5">
                 <Label>N° de plan</Label>
                 <Input type="number" value={numero} onChange={(e) => setNumero(Number(e.target.value))} />
               </div>
             </div>
-            <div className="grid gap-1.5">
-              <Label>Fecha de realización (texto)</Label>
-              <Input
-                value={realizacion}
-                onChange={(e) => setRealizacion(e.target.value)}
-                placeholder={`${MESES[mes - 1]} ${anio}`}
-              />
+            <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-1.5">
+                <Label>Desde</Label>
+                <Input
+                  type="date"
+                  value={desde}
+                  onChange={(e) => {
+                    setDesde(e.target.value);
+                    if (e.target.value && e.target.value > hasta) setHasta(e.target.value);
+                  }}
+                />
+              </div>
+              <div className="grid gap-1.5">
+                <Label>Hasta</Label>
+                <Input type="date" value={hasta} min={desde} onChange={(e) => setHasta(e.target.value)} />
+              </div>
             </div>
+            <p className="text-xs text-muted-foreground">
+              El plan abarcará: <span className="font-medium text-foreground">{textoRango(desde, hasta) || "—"}</span>{" "}
+              (puede pasar al mes siguiente).
+            </p>
             {!mesesSugeridos.includes(mes) && (
               <p className="text-xs text-muted-foreground">
                 Nota: este tipo de plan normalmente corresponde a {mesesSugeridos.map((m) => MESES[m - 1]).join(", ")}.
@@ -403,8 +420,9 @@ function Planes() {
             )}
             <p className="text-xs text-muted-foreground">
               {previa.length} equipos programados · {new Set(previa.map((p) => p.fecha)).size} días utilizados ·{" "}
-              {feriadosDelMes.length} feriados en el mes
+              {feriadosRango.length} feriados en el rango
             </p>
+
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setCreando(false)}>
