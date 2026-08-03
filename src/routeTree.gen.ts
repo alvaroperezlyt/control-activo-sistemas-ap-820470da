@@ -15,7 +15,6 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAsignacionesRouteImport } from './routes/_authenticated/asignaciones'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedFallasRouteImport } from './routes/_authenticated/fallas'
-import { Route as AuthenticatedInformesRouteImport } from './routes/_authenticated/informes'
 import { Route as AuthenticatedNotificacionesRouteImport } from './routes/_authenticated/notificaciones'
 import { Route as AuthenticatedPersonalRouteImport } from './routes/_authenticated/personal'
 import { Route as AuthenticatedPlanesRouteImport } from './routes/_authenticated/planes'
@@ -24,6 +23,8 @@ import { Route as AuthenticatedSucursalesRouteImport } from './routes/_authentic
 import { Route as AuthenticatedUsuariosRouteImport } from './routes/_authenticated/usuarios'
 import { Route as AuthenticatedEquiposIndexRouteImport } from './routes/_authenticated/equipos.index'
 import { Route as AuthenticatedEquiposIdRouteImport } from './routes/_authenticated/equipos.$id'
+import { Route as AuthenticatedInformesIndexRouteImport } from './routes/_authenticated/informes.index'
+import { Route as AuthenticatedInformesAntiguedadRouteImport } from './routes/_authenticated/informes.antiguedad'
 import { Route as ApiPublicHooksSyncPersonalRouteImport } from './routes/api/public/hooks/sync-personal'
 
 const IndexRoute = IndexRouteImport.update({
@@ -54,11 +55,6 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 const AuthenticatedFallasRoute = AuthenticatedFallasRouteImport.update({
   id: '/fallas',
   path: '/fallas',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedInformesRoute = AuthenticatedInformesRouteImport.update({
-  id: '/informes',
-  path: '/informes',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedNotificacionesRoute =
@@ -104,6 +100,18 @@ const AuthenticatedEquiposIdRoute = AuthenticatedEquiposIdRouteImport.update({
   path: '/equipos/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedInformesIndexRoute =
+  AuthenticatedInformesIndexRouteImport.update({
+    id: '/informes/',
+    path: '/informes/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedInformesAntiguedadRoute =
+  AuthenticatedInformesAntiguedadRouteImport.update({
+    id: '/informes/antiguedad',
+    path: '/informes/antiguedad',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const ApiPublicHooksSyncPersonalRoute =
   ApiPublicHooksSyncPersonalRouteImport.update({
     id: '/api/public/hooks/sync-personal',
@@ -117,7 +125,6 @@ export interface FileRoutesByFullPath {
   '/asignaciones': typeof AuthenticatedAsignacionesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/fallas': typeof AuthenticatedFallasRoute
-  '/informes': typeof AuthenticatedInformesRoute
   '/notificaciones': typeof AuthenticatedNotificacionesRoute
   '/personal': typeof AuthenticatedPersonalRoute
   '/planes': typeof AuthenticatedPlanesRoute
@@ -125,7 +132,9 @@ export interface FileRoutesByFullPath {
   '/sucursales': typeof AuthenticatedSucursalesRoute
   '/usuarios': typeof AuthenticatedUsuariosRoute
   '/equipos/$id': typeof AuthenticatedEquiposIdRoute
+  '/informes/antiguedad': typeof AuthenticatedInformesAntiguedadRoute
   '/equipos/': typeof AuthenticatedEquiposIndexRoute
+  '/informes/': typeof AuthenticatedInformesIndexRoute
   '/api/public/hooks/sync-personal': typeof ApiPublicHooksSyncPersonalRoute
 }
 export interface FileRoutesByTo {
@@ -134,7 +143,6 @@ export interface FileRoutesByTo {
   '/asignaciones': typeof AuthenticatedAsignacionesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/fallas': typeof AuthenticatedFallasRoute
-  '/informes': typeof AuthenticatedInformesRoute
   '/notificaciones': typeof AuthenticatedNotificacionesRoute
   '/personal': typeof AuthenticatedPersonalRoute
   '/planes': typeof AuthenticatedPlanesRoute
@@ -142,7 +150,9 @@ export interface FileRoutesByTo {
   '/sucursales': typeof AuthenticatedSucursalesRoute
   '/usuarios': typeof AuthenticatedUsuariosRoute
   '/equipos/$id': typeof AuthenticatedEquiposIdRoute
+  '/informes/antiguedad': typeof AuthenticatedInformesAntiguedadRoute
   '/equipos': typeof AuthenticatedEquiposIndexRoute
+  '/informes': typeof AuthenticatedInformesIndexRoute
   '/api/public/hooks/sync-personal': typeof ApiPublicHooksSyncPersonalRoute
 }
 export interface FileRoutesById {
@@ -153,7 +163,6 @@ export interface FileRoutesById {
   '/_authenticated/asignaciones': typeof AuthenticatedAsignacionesRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/fallas': typeof AuthenticatedFallasRoute
-  '/_authenticated/informes': typeof AuthenticatedInformesRoute
   '/_authenticated/notificaciones': typeof AuthenticatedNotificacionesRoute
   '/_authenticated/personal': typeof AuthenticatedPersonalRoute
   '/_authenticated/planes': typeof AuthenticatedPlanesRoute
@@ -161,7 +170,9 @@ export interface FileRoutesById {
   '/_authenticated/sucursales': typeof AuthenticatedSucursalesRoute
   '/_authenticated/usuarios': typeof AuthenticatedUsuariosRoute
   '/_authenticated/equipos/$id': typeof AuthenticatedEquiposIdRoute
+  '/_authenticated/informes/antiguedad': typeof AuthenticatedInformesAntiguedadRoute
   '/_authenticated/equipos/': typeof AuthenticatedEquiposIndexRoute
+  '/_authenticated/informes/': typeof AuthenticatedInformesIndexRoute
   '/api/public/hooks/sync-personal': typeof ApiPublicHooksSyncPersonalRoute
 }
 export interface FileRouteTypes {
@@ -172,7 +183,6 @@ export interface FileRouteTypes {
     | '/asignaciones'
     | '/dashboard'
     | '/fallas'
-    | '/informes'
     | '/notificaciones'
     | '/personal'
     | '/planes'
@@ -180,7 +190,9 @@ export interface FileRouteTypes {
     | '/sucursales'
     | '/usuarios'
     | '/equipos/$id'
+    | '/informes/antiguedad'
     | '/equipos/'
+    | '/informes/'
     | '/api/public/hooks/sync-personal'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -189,7 +201,6 @@ export interface FileRouteTypes {
     | '/asignaciones'
     | '/dashboard'
     | '/fallas'
-    | '/informes'
     | '/notificaciones'
     | '/personal'
     | '/planes'
@@ -197,7 +208,9 @@ export interface FileRouteTypes {
     | '/sucursales'
     | '/usuarios'
     | '/equipos/$id'
+    | '/informes/antiguedad'
     | '/equipos'
+    | '/informes'
     | '/api/public/hooks/sync-personal'
   id:
     | '__root__'
@@ -207,7 +220,6 @@ export interface FileRouteTypes {
     | '/_authenticated/asignaciones'
     | '/_authenticated/dashboard'
     | '/_authenticated/fallas'
-    | '/_authenticated/informes'
     | '/_authenticated/notificaciones'
     | '/_authenticated/personal'
     | '/_authenticated/planes'
@@ -215,7 +227,9 @@ export interface FileRouteTypes {
     | '/_authenticated/sucursales'
     | '/_authenticated/usuarios'
     | '/_authenticated/equipos/$id'
+    | '/_authenticated/informes/antiguedad'
     | '/_authenticated/equipos/'
+    | '/_authenticated/informes/'
     | '/api/public/hooks/sync-personal'
   fileRoutesById: FileRoutesById
 }
@@ -268,13 +282,6 @@ declare module '@tanstack/react-router' {
       path: '/fallas'
       fullPath: '/fallas'
       preLoaderRoute: typeof AuthenticatedFallasRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/informes': {
-      id: '/_authenticated/informes'
-      path: '/informes'
-      fullPath: '/informes'
-      preLoaderRoute: typeof AuthenticatedInformesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/notificaciones': {
@@ -333,6 +340,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedEquiposIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/informes/': {
+      id: '/_authenticated/informes/'
+      path: '/informes'
+      fullPath: '/informes/'
+      preLoaderRoute: typeof AuthenticatedInformesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/informes/antiguedad': {
+      id: '/_authenticated/informes/antiguedad'
+      path: '/informes/antiguedad'
+      fullPath: '/informes/antiguedad'
+      preLoaderRoute: typeof AuthenticatedInformesAntiguedadRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/public/hooks/sync-personal': {
       id: '/api/public/hooks/sync-personal'
       path: '/api/public/hooks/sync-personal'
@@ -347,7 +368,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAsignacionesRoute: typeof AuthenticatedAsignacionesRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedFallasRoute: typeof AuthenticatedFallasRoute
-  AuthenticatedInformesRoute: typeof AuthenticatedInformesRoute
   AuthenticatedNotificacionesRoute: typeof AuthenticatedNotificacionesRoute
   AuthenticatedPersonalRoute: typeof AuthenticatedPersonalRoute
   AuthenticatedPlanesRoute: typeof AuthenticatedPlanesRoute
@@ -355,14 +375,15 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSucursalesRoute: typeof AuthenticatedSucursalesRoute
   AuthenticatedUsuariosRoute: typeof AuthenticatedUsuariosRoute
   AuthenticatedEquiposIdRoute: typeof AuthenticatedEquiposIdRoute
+  AuthenticatedInformesAntiguedadRoute: typeof AuthenticatedInformesAntiguedadRoute
   AuthenticatedEquiposIndexRoute: typeof AuthenticatedEquiposIndexRoute
+  AuthenticatedInformesIndexRoute: typeof AuthenticatedInformesIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAsignacionesRoute: AuthenticatedAsignacionesRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedFallasRoute: AuthenticatedFallasRoute,
-  AuthenticatedInformesRoute: AuthenticatedInformesRoute,
   AuthenticatedNotificacionesRoute: AuthenticatedNotificacionesRoute,
   AuthenticatedPersonalRoute: AuthenticatedPersonalRoute,
   AuthenticatedPlanesRoute: AuthenticatedPlanesRoute,
@@ -370,7 +391,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSucursalesRoute: AuthenticatedSucursalesRoute,
   AuthenticatedUsuariosRoute: AuthenticatedUsuariosRoute,
   AuthenticatedEquiposIdRoute: AuthenticatedEquiposIdRoute,
+  AuthenticatedInformesAntiguedadRoute: AuthenticatedInformesAntiguedadRoute,
   AuthenticatedEquiposIndexRoute: AuthenticatedEquiposIndexRoute,
+  AuthenticatedInformesIndexRoute: AuthenticatedInformesIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

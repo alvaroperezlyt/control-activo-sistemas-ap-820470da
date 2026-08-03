@@ -1,30 +1,31 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { FileDown, Search } from "lucide-react";
+import { ArrowLeft, FileDown, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/PageHeader";
 import { formatearFecha } from "@/lib/tipos";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-export const Route = createFileRoute("/_authenticated/informes")({
+export const Route = createFileRoute("/_authenticated/informes/antiguedad")({
   head: () => ({
     meta: [
-      { title: "Informes | Activos TI" },
+      { title: "Antigüedad de equipos | Informes" },
       {
         name: "description",
         content:
-          "Informe de antigüedad de computadoras y teléfonos para decidir renovaciones y reasignaciones de equipos.",
+          "Informe de antigüedad de computadoras y teléfonos activos y libres para decidir renovaciones y reasignaciones.",
       },
-      { property: "og:title", content: "Informes | Activos TI" },
+      { property: "og:title", content: "Antigüedad de equipos | Informes" },
       { property: "og:description", content: "Antigüedad de equipos, asignados y características técnicas." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: Informes,
+  component: InformeAntiguedad,
 });
 
 type Fila = {
@@ -78,9 +79,10 @@ function resumenCaracteristicas(e: {
   return partes.filter(Boolean).join(" · ") || "—";
 }
 
-function Informes() {
+function InformeAntiguedad() {
   const [tipo, setTipo] = useState<string>("TODOS");
   const [texto, setTexto] = useState("");
+  const [seleccion, setSeleccion] = useState<Record<string, boolean>>({});
 
   const { data: filas = [], isLoading } = useQuery({
     queryKey: ["informes", "antiguedad"],
@@ -90,7 +92,8 @@ function Informes() {
         .select(
           "id, tipo, codigo_interno, estado_asignacion, fecha_compra, marca, modelo, datos, personal(nombre, puesto)",
         )
-        .in("tipo", ["COMPUTADORA", "TELEFONO"]);
+        .in("tipo", ["COMPUTADORA", "TELEFONO"])
+        .in("estado_asignacion", ["ASIGNADO", "LIBRE"]);
       if (error) throw error;
       return (data ?? [])
         .map((e) => ({
@@ -130,7 +133,19 @@ function Informes() {
     });
   }, [filas, tipo, texto]);
 
-  async function exportarPDF() {
+  const seleccionados = useMemo(() => visibles.filter((f) => seleccion[f.id]), [visibles, seleccion]);
+  const todosVisiblesMarcados = visibles.length > 0 && visibles.every((f) => seleccion[f.id]);
+
+  function alternarTodos(valor: boolean) {
+    setSeleccion((prev) => {
+      const siguiente = { ...prev };
+      for (const f of visibles) siguiente[f.id] = valor;
+      return siguiente;
+    });
+  }
+
+  async function exportarPDF(filasPDF: Fila[], subtitulo: string, sufijo: string) {
+    if (filasPDF.length === 0) return;
     const [{ default: jsPDF }, { default: autoTable }, { LOGO_EMPRESA }] = await Promise.all([
       import("jspdf"),
       import("jspdf-autotable"),
@@ -149,9 +164,7 @@ function Informes() {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(9);
     doc.text(
-      `Computadoras y teléfonos ordenados del más antiguo al más nuevo · Emitido: ${formatearFecha(
-        new Date().toISOString().slice(0, 10),
-      )}`,
+      `${subtitulo} · Emitido: ${formatearFecha(new Date().toISOString().slice(0, 10))}`,
       ancho / 2,
       22,
       { align: "center" },
@@ -160,7 +173,7 @@ function Informes() {
     autoTable(doc, {
       startY: 30,
       head: [["#", "Código", "Tipo", "Asignado a", "Puesto", "Fecha compra", "Antigüedad", "Características"]],
-      body: visibles.map((f, i) => [
+      body: filasPDF.map((f, i) => [
         String(i + 1),
         f.codigo_interno,
         f.tipo === "COMPUTADORA" ? "Computadora" : "Teléfono",
@@ -184,28 +197,51 @@ function Informes() {
       margin: { left: 10, right: 10 },
     });
 
-    doc.save(`informe-antiguedad-equipos-${new Date().toISOString().slice(0, 10)}.pdf`);
+    doc.save(`informe-antiguedad-${sufijo}-${new Date().toISOString().slice(0, 10)}.pdf`);
   }
+
+  const base = seleccionados.length > 0 ? seleccionados : visibles;
+  const compus = base.filter((f) => f.tipo === "COMPUTADORA");
+  const telefonos = base.filter((f) => f.tipo === "TELEFONO");
 
   return (
     <div className="mx-auto max-w-6xl">
-      <PageHeader
-        titulo="Informes"
-        descripcion="Reportes para la toma de decisiones sobre renovación y reasignación de activos."
+      <Link
+        to="/informes"
+        className="mb-3 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
       >
-        <Button onClick={exportarPDF} disabled={visibles.length === 0}>
+        <ArrowLeft className="size-4" />
+        Volver a Informes
+      </Link>
+      <PageHeader
+        titulo="Antigüedad de equipos"
+        descripcion="Computadoras y teléfonos activos y libres, del más antiguo al más nuevo. Selecciona los equipos que entrarán al informe."
+      >
+        <Button variant="outline" onClick={() => exportarPDF(compus, "Computadoras", "computadoras")} disabled={compus.length === 0}>
           <FileDown className="size-4" />
-          Exportar PDF
+          PDF computadoras ({compus.length})
+        </Button>
+        <Button variant="outline" onClick={() => exportarPDF(telefonos, "Teléfonos", "telefonos")} disabled={telefonos.length === 0}>
+          <FileDown className="size-4" />
+          PDF teléfonos ({telefonos.length})
+        </Button>
+        <Button
+          onClick={() =>
+            exportarPDF(
+              base,
+              seleccionados.length > 0 ? "Equipos seleccionados" : "Computadoras y teléfonos",
+              "equipos",
+            )
+          }
+          disabled={base.length === 0}
+        >
+          <FileDown className="size-4" />
+          PDF {seleccionados.length > 0 ? `seleccionados (${base.length})` : "completo"}
         </Button>
       </PageHeader>
 
       <div className="panel p-4">
-        <h2 className="text-lg font-semibold">Antigüedad de computadoras y teléfonos</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Ordenado del equipo más antiguo al más nuevo según su fecha de compra.
-        </p>
-
-        <div className="mt-4 flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <div className="relative min-w-56 flex-1">
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -225,12 +261,24 @@ function Informes() {
               <SelectItem value="TELEFONO">Solo teléfonos</SelectItem>
             </SelectContent>
           </Select>
+          {seleccionados.length > 0 && (
+            <Button variant="ghost" onClick={() => setSeleccion({})}>
+              Limpiar selección
+            </Button>
+          )}
         </div>
 
         <div className="mt-4 overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border text-left">
+                <th className="pb-2">
+                  <Checkbox
+                    checked={todosVisiblesMarcados}
+                    onCheckedChange={(v) => alternarTodos(Boolean(v))}
+                    aria-label="Seleccionar todos"
+                  />
+                </th>
                 <th className="pb-2 font-medium text-muted-foreground">#</th>
                 <th className="pb-2 font-medium text-muted-foreground">Código</th>
                 <th className="pb-2 font-medium text-muted-foreground">Asignado a</th>
@@ -243,20 +291,27 @@ function Informes() {
             <tbody>
               {isLoading && (
                 <tr>
-                  <td colSpan={7} className="py-6 text-muted-foreground">
+                  <td colSpan={8} className="py-6 text-muted-foreground">
                     Cargando…
                   </td>
                 </tr>
               )}
               {!isLoading && visibles.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="py-6 text-muted-foreground">
+                  <td colSpan={8} className="py-6 text-muted-foreground">
                     Sin equipos que coincidan con el filtro.
                   </td>
                 </tr>
               )}
               {visibles.map((f, i) => (
                 <tr key={f.id} className="border-b border-border/60 align-top last:border-0">
+                  <td className="py-2">
+                    <Checkbox
+                      checked={Boolean(seleccion[f.id])}
+                      onCheckedChange={(v) => setSeleccion((prev) => ({ ...prev, [f.id]: Boolean(v) }))}
+                      aria-label={`Seleccionar ${f.codigo_interno}`}
+                    />
+                  </td>
                   <td className="py-2 text-muted-foreground">{i + 1}</td>
                   <td className="py-2 font-mono">
                     <Link to="/equipos/$id" params={{ id: f.id }} className="hover:underline">
@@ -273,7 +328,10 @@ function Informes() {
             </tbody>
           </table>
         </div>
-        <p className="mt-3 text-xs text-muted-foreground">{visibles.length} equipos listados</p>
+        <p className="mt-3 text-xs text-muted-foreground">
+          {visibles.length} equipos listados · {seleccionados.length} seleccionados
+          {seleccionados.length === 0 && " (sin selección se exportan todos los listados)"}
+        </p>
       </div>
     </div>
   );
