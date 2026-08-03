@@ -373,6 +373,8 @@ export type Database = {
           created_at: string
           elabora: string
           fecha_elaboracion: string
+          fecha_fin: string
+          fecha_inicio: string
           fecha_realizacion: string
           id: string
           mes: number
@@ -390,6 +392,8 @@ export type Database = {
           created_at?: string
           elabora?: string
           fecha_elaboracion?: string
+          fecha_fin: string
+          fecha_inicio: string
           fecha_realizacion?: string
           id?: string
           mes: number
@@ -407,6 +411,8 @@ export type Database = {
           created_at?: string
           elabora?: string
           fecha_elaboracion?: string
+          fecha_fin?: string
+          fecha_inicio?: string
           fecha_realizacion?: string
           id?: string
           mes?: number
