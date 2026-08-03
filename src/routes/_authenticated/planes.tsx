@@ -84,7 +84,16 @@ function Planes() {
   const [anio, setAnio] = useState(hoy.getFullYear());
   const [mes, setMes] = useState(hoy.getMonth() + 1);
   const [numero, setNumero] = useState(1);
-  const [realizacion, setRealizacion] = useState("");
+  const [desde, setDesde] = useState(iso(hoy.getFullYear(), hoy.getMonth() + 1, 1));
+  const [hasta, setHasta] = useState(ultimoDiaMesISO(hoy.getFullYear(), hoy.getMonth() + 1));
+
+  const cambiarPeriodo = (nuevoAnio: number, nuevoMes: number) => {
+    setAnio(nuevoAnio);
+    setMes(nuevoMes);
+    setDesde(iso(nuevoAnio, nuevoMes, 1));
+    setHasta(ultimoDiaMesISO(nuevoAnio, nuevoMes));
+  };
+
   const [abierto, setAbierto] = useState<string | null>(null);
 
   const [feriadoFecha, setFeriadoFecha] = useState("");
