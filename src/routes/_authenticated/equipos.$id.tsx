@@ -1,10 +1,23 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { ArrowLeft, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { TIPOS, formatearFecha, type TipoEquipo } from "@/lib/tipos";
 import { EstadoBadge } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/_authenticated/equipos/$id")({
   head: () => ({
@@ -22,6 +35,34 @@ export const Route = createFileRoute("/_authenticated/equipos/$id")({
 
 function DetalleEquipo() {
   const { id } = Route.useParams();
+  const queryClient = useQueryClient();
+  const [nuevaFalla, setNuevaFalla] = useState(false);
+  const [descripcion, setDescripcion] = useState("");
+  const [reportadoPor, setReportadoPor] = useState("");
+  const [fechaFalla, setFechaFalla] = useState(() => new Date().toISOString().slice(0, 10));
+
+  const crearFalla = useMutation({
+    mutationFn: async () => {
+      if (!descripcion.trim()) throw new Error("Describe la falla.");
+      const { error } = await supabase.from("fallas").insert({
+        equipo_id: id,
+        descripcion: descripcion.trim(),
+        reportado_por: reportadoPor.trim() || "—",
+        fecha: fechaFalla,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["fallas"] });
+      toast.success("Falla registrada");
+      setNuevaFalla(false);
+      setDescripcion("");
+      setReportadoPor("");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+
 
   const { data: equipo, isLoading } = useQuery({
     queryKey: ["equipos", id],
@@ -133,7 +174,13 @@ function DetalleEquipo() {
       </div>
 
       <div className="panel mt-6 p-6">
-        <h2 className="font-semibold">Fallas y reparaciones</h2>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="font-semibold">Fallas y reparaciones</h2>
+          <Button size="sm" onClick={() => setNuevaFalla(true)}>
+            <Plus className="size-4" />
+            Registrar falla
+          </Button>
+        </div>
         <ul className="mt-4 space-y-3">
           {fallas.length === 0 && <li className="text-sm text-muted-foreground">Sin fallas registradas.</li>}
           {fallas.map((f) => (
@@ -154,7 +201,59 @@ function DetalleEquipo() {
             </li>
           ))}
         </ul>
+        <p className="mt-4 text-xs text-muted-foreground">
+          Las reparaciones se registran desde el módulo{" "}
+          <Link to="/fallas" className="underline">
+            Fallas y reparaciones
+          </Link>
+          .
+        </p>
       </div>
+
+      <Dialog open={nuevaFalla} onOpenChange={setNuevaFalla}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Registrar falla</DialogTitle>
+            <DialogDescription>
+              Equipo {equipo.codigo_interno} · {[equipo.marca, equipo.modelo].filter(Boolean).join(" ") || "sin marca"}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="fdesc">Descripción de la falla</Label>
+              <Textarea
+                id="fdesc"
+                value={descripcion}
+                onChange={(e) => setDescripcion(e.target.value)}
+                maxLength={1000}
+              />
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="frep">Reportado por</Label>
+                <Input
+                  id="frep"
+                  value={reportadoPor}
+                  onChange={(e) => setReportadoPor(e.target.value)}
+                  maxLength={120}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="ffecha">Fecha</Label>
+                <Input id="ffecha" type="date" value={fechaFalla} onChange={(e) => setFechaFalla(e.target.value)} />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setNuevaFalla(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={() => crearFalla.mutate()} disabled={crearFalla.isPending}>
+              Guardar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
