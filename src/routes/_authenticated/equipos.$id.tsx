@@ -174,7 +174,13 @@ function DetalleEquipo() {
       </div>
 
       <div className="panel mt-6 p-6">
-        <h2 className="font-semibold">Fallas y reparaciones</h2>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="font-semibold">Fallas y reparaciones</h2>
+          <Button size="sm" onClick={() => setNuevaFalla(true)}>
+            <Plus className="size-4" />
+            Registrar falla
+          </Button>
+        </div>
         <ul className="mt-4 space-y-3">
           {fallas.length === 0 && <li className="text-sm text-muted-foreground">Sin fallas registradas.</li>}
           {fallas.map((f) => (
@@ -195,7 +201,59 @@ function DetalleEquipo() {
             </li>
           ))}
         </ul>
+        <p className="mt-4 text-xs text-muted-foreground">
+          Las reparaciones se registran desde el módulo{" "}
+          <Link to="/fallas" className="underline">
+            Fallas y reparaciones
+          </Link>
+          .
+        </p>
       </div>
+
+      <Dialog open={nuevaFalla} onOpenChange={setNuevaFalla}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Registrar falla</DialogTitle>
+            <DialogDescription>
+              Equipo {equipo.codigo_interno} · {[equipo.marca, equipo.modelo].filter(Boolean).join(" ") || "sin marca"}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="fdesc">Descripción de la falla</Label>
+              <Textarea
+                id="fdesc"
+                value={descripcion}
+                onChange={(e) => setDescripcion(e.target.value)}
+                maxLength={1000}
+              />
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="frep">Reportado por</Label>
+                <Input
+                  id="frep"
+                  value={reportadoPor}
+                  onChange={(e) => setReportadoPor(e.target.value)}
+                  maxLength={120}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="ffecha">Fecha</Label>
+                <Input id="ffecha" type="date" value={fechaFalla} onChange={(e) => setFechaFalla(e.target.value)} />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setNuevaFalla(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={() => crearFalla.mutate()} disabled={crearFalla.isPending}>
+              Guardar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
