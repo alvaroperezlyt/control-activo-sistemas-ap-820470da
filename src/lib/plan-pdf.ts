@@ -128,7 +128,8 @@ export function generarPlanPDF(
         { content: "FECHA DE ELABORACION:", styles: { fontStyle: "bold" } },
         fechaCorta(plan.fecha_elaboracion),
         { content: "FECHA DE REALIZACION:", styles: { fontStyle: "bold" } },
-        plan.fecha_realizacion,
+        textoRango(plan.fecha_inicio, plan.fecha_fin) || plan.fecha_realizacion,
+
       ],
       [
         {
