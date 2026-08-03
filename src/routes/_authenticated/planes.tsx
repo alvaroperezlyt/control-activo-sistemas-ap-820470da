@@ -346,7 +346,9 @@ function Planes() {
           <DialogHeader>
             <DialogTitle>Nuevo plan</DialogTitle>
             <DialogDescription>
-              Se reparten las {computadoras.length} computadoras asignadas entre los días hábiles del mes (sábados solo 2).
+              Se reparten las {computadoras.length} computadoras asignadas entre los días hábiles del rango elegido
+              (domingos y feriados excluidos; sábados solo 2).
+
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-3">
