@@ -650,6 +650,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      avisar_planes_proximos: { Args: never; Returns: undefined }
       es_personal_ti: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
