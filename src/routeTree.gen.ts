@@ -15,7 +15,6 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAsignacionesRouteImport } from './routes/_authenticated/asignaciones'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedFallasRouteImport } from './routes/_authenticated/fallas'
-import { Route as AuthenticatedInformesRouteImport } from './routes/_authenticated/informes'
 import { Route as AuthenticatedNotificacionesRouteImport } from './routes/_authenticated/notificaciones'
 import { Route as AuthenticatedPersonalRouteImport } from './routes/_authenticated/personal'
 import { Route as AuthenticatedPlanesRouteImport } from './routes/_authenticated/planes'
@@ -54,11 +53,6 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 const AuthenticatedFallasRoute = AuthenticatedFallasRouteImport.update({
   id: '/fallas',
   path: '/fallas',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedInformesRoute = AuthenticatedInformesRouteImport.update({
-  id: '/informes',
-  path: '/informes',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedNotificacionesRoute =
@@ -117,7 +111,6 @@ export interface FileRoutesByFullPath {
   '/asignaciones': typeof AuthenticatedAsignacionesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/fallas': typeof AuthenticatedFallasRoute
-  '/informes': typeof AuthenticatedInformesRoute
   '/notificaciones': typeof AuthenticatedNotificacionesRoute
   '/personal': typeof AuthenticatedPersonalRoute
   '/planes': typeof AuthenticatedPlanesRoute
@@ -134,7 +127,6 @@ export interface FileRoutesByTo {
   '/asignaciones': typeof AuthenticatedAsignacionesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/fallas': typeof AuthenticatedFallasRoute
-  '/informes': typeof AuthenticatedInformesRoute
   '/notificaciones': typeof AuthenticatedNotificacionesRoute
   '/personal': typeof AuthenticatedPersonalRoute
   '/planes': typeof AuthenticatedPlanesRoute
@@ -153,7 +145,6 @@ export interface FileRoutesById {
   '/_authenticated/asignaciones': typeof AuthenticatedAsignacionesRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/fallas': typeof AuthenticatedFallasRoute
-  '/_authenticated/informes': typeof AuthenticatedInformesRoute
   '/_authenticated/notificaciones': typeof AuthenticatedNotificacionesRoute
   '/_authenticated/personal': typeof AuthenticatedPersonalRoute
   '/_authenticated/planes': typeof AuthenticatedPlanesRoute
@@ -172,7 +163,6 @@ export interface FileRouteTypes {
     | '/asignaciones'
     | '/dashboard'
     | '/fallas'
-    | '/informes'
     | '/notificaciones'
     | '/personal'
     | '/planes'
@@ -189,7 +179,6 @@ export interface FileRouteTypes {
     | '/asignaciones'
     | '/dashboard'
     | '/fallas'
-    | '/informes'
     | '/notificaciones'
     | '/personal'
     | '/planes'
@@ -207,7 +196,6 @@ export interface FileRouteTypes {
     | '/_authenticated/asignaciones'
     | '/_authenticated/dashboard'
     | '/_authenticated/fallas'
-    | '/_authenticated/informes'
     | '/_authenticated/notificaciones'
     | '/_authenticated/personal'
     | '/_authenticated/planes'
@@ -268,13 +256,6 @@ declare module '@tanstack/react-router' {
       path: '/fallas'
       fullPath: '/fallas'
       preLoaderRoute: typeof AuthenticatedFallasRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/informes': {
-      id: '/_authenticated/informes'
-      path: '/informes'
-      fullPath: '/informes'
-      preLoaderRoute: typeof AuthenticatedInformesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/notificaciones': {
@@ -347,7 +328,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAsignacionesRoute: typeof AuthenticatedAsignacionesRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedFallasRoute: typeof AuthenticatedFallasRoute
-  AuthenticatedInformesRoute: typeof AuthenticatedInformesRoute
   AuthenticatedNotificacionesRoute: typeof AuthenticatedNotificacionesRoute
   AuthenticatedPersonalRoute: typeof AuthenticatedPersonalRoute
   AuthenticatedPlanesRoute: typeof AuthenticatedPlanesRoute
@@ -362,7 +342,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAsignacionesRoute: AuthenticatedAsignacionesRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedFallasRoute: AuthenticatedFallasRoute,
-  AuthenticatedInformesRoute: AuthenticatedInformesRoute,
   AuthenticatedNotificacionesRoute: AuthenticatedNotificacionesRoute,
   AuthenticatedPersonalRoute: AuthenticatedPersonalRoute,
   AuthenticatedPlanesRoute: AuthenticatedPlanesRoute,
