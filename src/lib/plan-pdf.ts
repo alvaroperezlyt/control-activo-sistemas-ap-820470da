@@ -8,9 +8,9 @@ import {
   GRIS_NO_LABORABLE,
   MESES,
   colorLugar,
-  diaSemana,
-  diasDelMes,
-  iso,
+  diaSemanaISO,
+  rangoFechas,
+  textoRango,
   type ItemPlan,
   type TipoPlan,
 } from "./planes";
@@ -22,6 +22,8 @@ export type PlanPDF = {
   numero: number;
   fecha_elaboracion: string;
   fecha_realizacion: string;
+  fecha_inicio: string;
+  fecha_fin: string;
   objetivo: string;
   alcance: string;
   recursos: string;
@@ -29,6 +31,7 @@ export type PlanPDF = {
   elabora: string;
   autoriza: string;
 };
+
 
 const AZUL_CLARO: [number, number, number] = [222, 235, 247];
 const BORDE: [number, number, number] = [120, 120, 120];
