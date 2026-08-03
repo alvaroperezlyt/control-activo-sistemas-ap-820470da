@@ -8,6 +8,8 @@ import {
   Wrench,
   Building,
   CalendarCheck,
+  FileBarChart,
+
 
   Users,
   Bell,
@@ -38,6 +40,8 @@ const enlaces = [
   { to: "/sucursales", label: "Sucursales / Líneas de Negocio", icon: Building },
   { to: "/planes", label: "Planes y mantenimiento", icon: CalendarCheck },
   { to: "/personal", label: "Personal (RRHH)", icon: Users },
+  { to: "/informes", label: "Informes", icon: FileBarChart },
+
 
 ] as const;
 
