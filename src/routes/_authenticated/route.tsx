@@ -9,6 +9,7 @@ import {
   Building,
   CalendarCheck,
   FileBarChart,
+  Info,
 
 
   Users,
