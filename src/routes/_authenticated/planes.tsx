@@ -162,7 +162,7 @@ function Planes() {
         .select("id")
         .single();
       if (error) throw error;
-      const items = distribuir(computadoras, anio, mes, feriadosDelMes);
+      const items = distribuir(computadoras, desde, hasta, feriadosRango);
       if (items.length > 0) {
         const { error: e2 } = await supabase.from("plan_items").insert(
           items.map((i) => ({
