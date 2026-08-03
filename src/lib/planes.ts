@@ -102,28 +102,58 @@ export type EquipoPlan = {
 
 export type ItemPlan = EquipoPlan & { fecha: string; turno: Turno; orden: number };
 
+/** Lista de fechas ISO entre dos fechas (inclusive). */
+export function rangoFechas(desde: string, hasta: string): string[] {
+  const out: string[] = [];
+  if (!desde || !hasta || desde > hasta) return out;
+  const [a1, m1, d1] = desde.split("-").map(Number);
+  const cur = new Date(a1!, (m1 ?? 1) - 1, d1!);
+  const [a2, m2, d2] = hasta.split("-").map(Number);
+  const fin = new Date(a2!, (m2 ?? 1) - 1, d2!);
+  while (cur <= fin) {
+    out.push(iso(cur.getFullYear(), cur.getMonth() + 1, cur.getDate()));
+    cur.setDate(cur.getDate() + 1);
+    if (out.length > 400) break;
+  }
+  return out;
+}
+
+export function diaSemanaISO(fecha: string): number {
+  const [a, m, d] = fecha.split("-").map(Number);
+  return new Date(a!, (m ?? 1) - 1, d!).getDay();
+}
+
+export function ultimoDiaMesISO(anio: number, mes: number): string {
+  return iso(anio, mes, diasDelMes(anio, mes));
+}
+
+/** Texto tipo "01 al 30 de JUNIO de 2026" o "15 de MAYO al 05 de JUNIO de 2026". */
+export function textoRango(desde: string, hasta: string): string {
+  if (!desde || !hasta) return "";
+  const [a1, m1, d1] = desde.split("-").map(Number);
+  const [a2, m2, d2] = hasta.split("-").map(Number);
+  const p = (n?: number) => String(n ?? 1).padStart(2, "0");
+  if (a1 === a2 && m1 === m2) return `${p(d1)} al ${p(d2)} de ${MESES[(m1 ?? 1) - 1]} de ${a2}`;
+  if (a1 === a2) return `${p(d1)} de ${MESES[(m1 ?? 1) - 1]} al ${p(d2)} de ${MESES[(m2 ?? 1) - 1]} de ${a2}`;
+  return `${p(d1)} de ${MESES[(m1 ?? 1) - 1]} de ${a1} al ${p(d2)} de ${MESES[(m2 ?? 1) - 1]} de ${a2}`;
+}
+
 /**
- * Reparte los equipos entre los días del mes:
+ * Reparte los equipos entre los días del rango indicado:
  * - excluye domingos y feriados
  * - sábados: máximo 2 equipos (medio día)
- * - lunes a viernes: carga automática y parejo según cantidad de equipos
+ * - lunes a viernes: carga automática y pareja según cantidad de equipos
  */
 export function distribuir(
   equipos: EquipoPlan[],
-  anio: number,
-  mes: number,
+  desde: string,
+  hasta: string,
   feriados: string[],
-  desdeDia = 1,
 ): ItemPlan[] {
   const set = new Set(feriados);
-  const total = diasDelMes(anio, mes);
-  const habiles: { dia: number; sabado: boolean }[] = [];
-  for (let d = desdeDia; d <= total; d++) {
-    const dow = diaSemana(anio, mes, d);
-    if (dow === 0) continue;
-    if (set.has(iso(anio, mes, d))) continue;
-    habiles.push({ dia: d, sabado: dow === 6 });
-  }
+  const habiles = rangoFechas(desde, hasta)
+    .filter((f) => diaSemanaISO(f) !== 0 && !set.has(f))
+    .map((f) => ({ fecha: f, sabado: diaSemanaISO(f) === 6 }));
   if (habiles.length === 0) return [];
 
   const sabados = habiles.filter((h) => h.sabado).length;
@@ -139,7 +169,7 @@ export function distribuir(
       const eq = equipos[i]!;
       items.push({
         ...eq,
-        fecha: iso(anio, mes, h.dia),
+        fecha: h.fecha,
         turno: k % 2 === 0 ? "MANANA" : "TARDE",
         orden: i + 1,
       });
@@ -148,3 +178,4 @@ export function distribuir(
   }
   return items;
 }
+
