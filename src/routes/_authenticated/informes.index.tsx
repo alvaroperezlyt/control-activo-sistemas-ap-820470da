@@ -1,6 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { FileBarChart, ArrowRight } from "lucide-react";
+import { FileBarChart, ArrowRight, FileSpreadsheet, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 import { PageHeader } from "@/components/PageHeader";
+import { Button } from "@/components/ui/button";
+import { exportarTodoExcel } from "@/lib/export-excel";
 
 export const Route = createFileRoute("/_authenticated/informes/")({
   head: () => ({
