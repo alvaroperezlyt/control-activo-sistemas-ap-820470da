@@ -192,10 +192,18 @@ function Planes() {
         );
         if (e2) throw e2;
       }
+      // El aviso de "plan pendiente" de ese mes ya no aplica.
+      await supabase
+        .from("notificaciones")
+        .update({ leida: true })
+        .eq("tipo", "PLAN_PENDIENTE")
+        .eq("personal_codigo", `${tipo}-${anio}-${String(mes).padStart(2, "0")}`);
       return plan.id as string;
     },
     onSuccess: (id) => {
       queryClient.invalidateQueries({ queryKey: ["planes"] });
+      queryClient.invalidateQueries({ queryKey: ["notificaciones"] });
+
       setCreando(false);
       setAbierto(id);
       toast.success("Plan generado. Revisa y ajusta antes de exportar.");
