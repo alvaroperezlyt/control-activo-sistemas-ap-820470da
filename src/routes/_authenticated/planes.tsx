@@ -153,7 +153,10 @@ function Planes() {
           anio,
           mes,
           numero,
-          fecha_realizacion: realizacion || `${MESES[mes - 1]} ${anio}`,
+          fecha_inicio: desde,
+          fecha_fin: hasta,
+          fecha_realizacion: textoRango(desde, hasta),
+
           objetivo: cfg.objetivo,
           alcance: cfg.alcance,
           recursos: cfg.recursos,
