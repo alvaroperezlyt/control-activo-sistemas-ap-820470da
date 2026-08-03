@@ -23,6 +23,8 @@ import { Route as AuthenticatedSucursalesRouteImport } from './routes/_authentic
 import { Route as AuthenticatedUsuariosRouteImport } from './routes/_authenticated/usuarios'
 import { Route as AuthenticatedEquiposIndexRouteImport } from './routes/_authenticated/equipos.index'
 import { Route as AuthenticatedEquiposIdRouteImport } from './routes/_authenticated/equipos.$id'
+import { Route as AuthenticatedInformesIndexRouteImport } from './routes/_authenticated/informes.index'
+import { Route as AuthenticatedInformesAntiguedadRouteImport } from './routes/_authenticated/informes.antiguedad'
 import { Route as ApiPublicHooksSyncPersonalRouteImport } from './routes/api/public/hooks/sync-personal'
 
 const IndexRoute = IndexRouteImport.update({
@@ -98,6 +100,18 @@ const AuthenticatedEquiposIdRoute = AuthenticatedEquiposIdRouteImport.update({
   path: '/equipos/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedInformesIndexRoute =
+  AuthenticatedInformesIndexRouteImport.update({
+    id: '/informes/',
+    path: '/informes/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedInformesAntiguedadRoute =
+  AuthenticatedInformesAntiguedadRouteImport.update({
+    id: '/informes/antiguedad',
+    path: '/informes/antiguedad',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const ApiPublicHooksSyncPersonalRoute =
   ApiPublicHooksSyncPersonalRouteImport.update({
     id: '/api/public/hooks/sync-personal',
@@ -118,7 +132,9 @@ export interface FileRoutesByFullPath {
   '/sucursales': typeof AuthenticatedSucursalesRoute
   '/usuarios': typeof AuthenticatedUsuariosRoute
   '/equipos/$id': typeof AuthenticatedEquiposIdRoute
+  '/informes/antiguedad': typeof AuthenticatedInformesAntiguedadRoute
   '/equipos/': typeof AuthenticatedEquiposIndexRoute
+  '/informes/': typeof AuthenticatedInformesIndexRoute
   '/api/public/hooks/sync-personal': typeof ApiPublicHooksSyncPersonalRoute
 }
 export interface FileRoutesByTo {
@@ -134,7 +150,9 @@ export interface FileRoutesByTo {
   '/sucursales': typeof AuthenticatedSucursalesRoute
   '/usuarios': typeof AuthenticatedUsuariosRoute
   '/equipos/$id': typeof AuthenticatedEquiposIdRoute
+  '/informes/antiguedad': typeof AuthenticatedInformesAntiguedadRoute
   '/equipos': typeof AuthenticatedEquiposIndexRoute
+  '/informes': typeof AuthenticatedInformesIndexRoute
   '/api/public/hooks/sync-personal': typeof ApiPublicHooksSyncPersonalRoute
 }
 export interface FileRoutesById {
@@ -152,7 +170,9 @@ export interface FileRoutesById {
   '/_authenticated/sucursales': typeof AuthenticatedSucursalesRoute
   '/_authenticated/usuarios': typeof AuthenticatedUsuariosRoute
   '/_authenticated/equipos/$id': typeof AuthenticatedEquiposIdRoute
+  '/_authenticated/informes/antiguedad': typeof AuthenticatedInformesAntiguedadRoute
   '/_authenticated/equipos/': typeof AuthenticatedEquiposIndexRoute
+  '/_authenticated/informes/': typeof AuthenticatedInformesIndexRoute
   '/api/public/hooks/sync-personal': typeof ApiPublicHooksSyncPersonalRoute
 }
 export interface FileRouteTypes {
@@ -170,7 +190,9 @@ export interface FileRouteTypes {
     | '/sucursales'
     | '/usuarios'
     | '/equipos/$id'
+    | '/informes/antiguedad'
     | '/equipos/'
+    | '/informes/'
     | '/api/public/hooks/sync-personal'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -186,7 +208,9 @@ export interface FileRouteTypes {
     | '/sucursales'
     | '/usuarios'
     | '/equipos/$id'
+    | '/informes/antiguedad'
     | '/equipos'
+    | '/informes'
     | '/api/public/hooks/sync-personal'
   id:
     | '__root__'
@@ -203,7 +227,9 @@ export interface FileRouteTypes {
     | '/_authenticated/sucursales'
     | '/_authenticated/usuarios'
     | '/_authenticated/equipos/$id'
+    | '/_authenticated/informes/antiguedad'
     | '/_authenticated/equipos/'
+    | '/_authenticated/informes/'
     | '/api/public/hooks/sync-personal'
   fileRoutesById: FileRoutesById
 }
@@ -314,6 +340,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedEquiposIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/informes/': {
+      id: '/_authenticated/informes/'
+      path: '/informes'
+      fullPath: '/informes/'
+      preLoaderRoute: typeof AuthenticatedInformesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/informes/antiguedad': {
+      id: '/_authenticated/informes/antiguedad'
+      path: '/informes/antiguedad'
+      fullPath: '/informes/antiguedad'
+      preLoaderRoute: typeof AuthenticatedInformesAntiguedadRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/public/hooks/sync-personal': {
       id: '/api/public/hooks/sync-personal'
       path: '/api/public/hooks/sync-personal'
@@ -335,7 +375,9 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSucursalesRoute: typeof AuthenticatedSucursalesRoute
   AuthenticatedUsuariosRoute: typeof AuthenticatedUsuariosRoute
   AuthenticatedEquiposIdRoute: typeof AuthenticatedEquiposIdRoute
+  AuthenticatedInformesAntiguedadRoute: typeof AuthenticatedInformesAntiguedadRoute
   AuthenticatedEquiposIndexRoute: typeof AuthenticatedEquiposIndexRoute
+  AuthenticatedInformesIndexRoute: typeof AuthenticatedInformesIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -349,7 +391,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSucursalesRoute: AuthenticatedSucursalesRoute,
   AuthenticatedUsuariosRoute: AuthenticatedUsuariosRoute,
   AuthenticatedEquiposIdRoute: AuthenticatedEquiposIdRoute,
+  AuthenticatedInformesAntiguedadRoute: AuthenticatedInformesAntiguedadRoute,
   AuthenticatedEquiposIndexRoute: AuthenticatedEquiposIndexRoute,
+  AuthenticatedInformesIndexRoute: AuthenticatedInformesIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
