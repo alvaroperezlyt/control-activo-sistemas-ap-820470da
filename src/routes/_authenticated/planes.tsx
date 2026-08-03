@@ -63,6 +63,9 @@ type PlanRow = {
   numero: number;
   fecha_elaboracion: string;
   fecha_realizacion: string;
+  fecha_inicio: string;
+  fecha_fin: string;
+
   objetivo: string;
   alcance: string;
   recursos: string;
