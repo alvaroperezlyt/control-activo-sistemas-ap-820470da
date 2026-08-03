@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedAcercaDeRouteImport } from './routes/_authenticated/acerca-de'
 import { Route as AuthenticatedAsignacionesRouteImport } from './routes/_authenticated/asignaciones'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedFallasRouteImport } from './routes/_authenticated/fallas'
@@ -40,6 +41,11 @@ const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAcercaDeRoute = AuthenticatedAcercaDeRouteImport.update({
+  id: '/acerca-de',
+  path: '/acerca-de',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAsignacionesRoute =
   AuthenticatedAsignacionesRouteImport.update({
@@ -122,6 +128,7 @@ const ApiPublicHooksSyncPersonalRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/acerca-de': typeof AuthenticatedAcercaDeRoute
   '/asignaciones': typeof AuthenticatedAsignacionesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/fallas': typeof AuthenticatedFallasRoute
@@ -140,6 +147,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/acerca-de': typeof AuthenticatedAcercaDeRoute
   '/asignaciones': typeof AuthenticatedAsignacionesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/fallas': typeof AuthenticatedFallasRoute
@@ -160,6 +168,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/acerca-de': typeof AuthenticatedAcercaDeRoute
   '/_authenticated/asignaciones': typeof AuthenticatedAsignacionesRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/fallas': typeof AuthenticatedFallasRoute
@@ -180,6 +189,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/acerca-de'
     | '/asignaciones'
     | '/dashboard'
     | '/fallas'
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/acerca-de'
     | '/asignaciones'
     | '/dashboard'
     | '/fallas'
@@ -217,6 +228,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/acerca-de'
     | '/_authenticated/asignaciones'
     | '/_authenticated/dashboard'
     | '/_authenticated/fallas'
@@ -262,6 +274,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/acerca-de': {
+      id: '/_authenticated/acerca-de'
+      path: '/acerca-de'
+      fullPath: '/acerca-de'
+      preLoaderRoute: typeof AuthenticatedAcercaDeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/asignaciones': {
       id: '/_authenticated/asignaciones'
@@ -365,6 +384,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAcercaDeRoute: typeof AuthenticatedAcercaDeRoute
   AuthenticatedAsignacionesRoute: typeof AuthenticatedAsignacionesRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedFallasRoute: typeof AuthenticatedFallasRoute
@@ -381,6 +401,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAcercaDeRoute: AuthenticatedAcercaDeRoute,
   AuthenticatedAsignacionesRoute: AuthenticatedAsignacionesRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedFallasRoute: AuthenticatedFallasRoute,

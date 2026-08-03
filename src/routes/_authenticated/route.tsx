@@ -41,8 +41,7 @@ const enlaces = [
   { to: "/planes", label: "Planes y mantenimiento", icon: CalendarCheck },
   { to: "/personal", label: "Personal (RRHH)", icon: Users },
   { to: "/informes", label: "Informes", icon: FileBarChart },
-
-
+  { to: "/acerca-de", label: "Acerca de", icon: Info },
 ] as const;
 
 function Shell() {
