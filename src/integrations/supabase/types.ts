@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      ajustes: {
+        Row: {
+          clave: string
+          created_at: string
+          updated_at: string
+          valor: string
+        }
+        Insert: {
+          clave: string
+          created_at?: string
+          updated_at?: string
+          valor?: string
+        }
+        Update: {
+          clave?: string
+          created_at?: string
+          updated_at?: string
+          valor?: string
+        }
+        Relationships: []
+      }
       almacenes: {
         Row: {
           created_at: string
