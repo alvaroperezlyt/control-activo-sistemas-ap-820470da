@@ -24,11 +24,14 @@ import {
   distribuir,
   fechaLarga,
   iso,
+  textoRango,
+  ultimoDiaMesISO,
   type EquipoPlan,
   type ItemPlan,
   type TipoPlan,
   type Turno,
 } from "@/lib/planes";
+
 import { generarPlanPDF } from "@/lib/plan-pdf";
 
 export const Route = createFileRoute("/_authenticated/planes")({
@@ -60,6 +63,9 @@ type PlanRow = {
   numero: number;
   fecha_elaboracion: string;
   fecha_realizacion: string;
+  fecha_inicio: string;
+  fecha_fin: string;
+
   objetivo: string;
   alcance: string;
   recursos: string;
@@ -78,7 +84,16 @@ function Planes() {
   const [anio, setAnio] = useState(hoy.getFullYear());
   const [mes, setMes] = useState(hoy.getMonth() + 1);
   const [numero, setNumero] = useState(1);
-  const [realizacion, setRealizacion] = useState("");
+  const [desde, setDesde] = useState(iso(hoy.getFullYear(), hoy.getMonth() + 1, 1));
+  const [hasta, setHasta] = useState(ultimoDiaMesISO(hoy.getFullYear(), hoy.getMonth() + 1));
+
+  const cambiarPeriodo = (nuevoAnio: number, nuevoMes: number) => {
+    setAnio(nuevoAnio);
+    setMes(nuevoMes);
+    setDesde(iso(nuevoAnio, nuevoMes, 1));
+    setHasta(ultimoDiaMesISO(nuevoAnio, nuevoMes));
+  };
+
   const [abierto, setAbierto] = useState<string | null>(null);
 
   const [feriadoFecha, setFeriadoFecha] = useState("");
@@ -127,15 +142,16 @@ function Planes() {
     },
   });
 
-  const feriadosDelMes = useMemo(
-    () => feriados.filter((f) => f.fecha.startsWith(`${anio}-${String(mes).padStart(2, "0")}`)).map((f) => f.fecha),
-    [feriados, anio, mes],
+  const feriadosRango = useMemo(
+    () => feriados.filter((f) => f.fecha >= desde && f.fecha <= hasta).map((f) => f.fecha),
+    [feriados, desde, hasta],
   );
 
   const previa = useMemo(
-    () => distribuir(computadoras, anio, mes, feriadosDelMes),
-    [computadoras, anio, mes, feriadosDelMes],
+    () => distribuir(computadoras, desde, hasta, feriadosRango),
+    [computadoras, desde, hasta, feriadosRango],
   );
+
 
   const crear = useMutation({
     mutationFn: async () => {
@@ -147,7 +163,10 @@ function Planes() {
           anio,
           mes,
           numero,
-          fecha_realizacion: realizacion || `${MESES[mes - 1]} ${anio}`,
+          fecha_inicio: desde,
+          fecha_fin: hasta,
+          fecha_realizacion: textoRango(desde, hasta),
+
           objetivo: cfg.objetivo,
           alcance: cfg.alcance,
           recursos: cfg.recursos,
@@ -156,7 +175,7 @@ function Planes() {
         .select("id")
         .single();
       if (error) throw error;
-      const items = distribuir(computadoras, anio, mes, feriadosDelMes);
+      const items = distribuir(computadoras, desde, hasta, feriadosRango);
       if (items.length > 0) {
         const { error: e2 } = await supabase.from("plan_items").insert(
           items.map((i) => ({
@@ -327,7 +346,9 @@ function Planes() {
           <DialogHeader>
             <DialogTitle>Nuevo plan</DialogTitle>
             <DialogDescription>
-              Se reparten las {computadoras.length} computadoras asignadas entre los días hábiles del mes (sábados solo 2).
+              Se reparten las {computadoras.length} computadoras asignadas entre los días hábiles del rango elegido
+              (domingos y feriados excluidos; sábados solo 2).
+
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-3">
@@ -346,7 +367,7 @@ function Planes() {
             <div className="grid grid-cols-3 gap-3">
               <div className="grid gap-1.5">
                 <Label>Mes</Label>
-                <Select value={String(mes)} onValueChange={(v) => setMes(Number(v))}>
+                <Select value={String(mes)} onValueChange={(v) => cambiarPeriodo(anio, Number(v))}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -362,21 +383,38 @@ function Planes() {
               </div>
               <div className="grid gap-1.5">
                 <Label>Año</Label>
-                <Input type="number" value={anio} onChange={(e) => setAnio(Number(e.target.value))} />
+                <Input
+                  type="number"
+                  value={anio}
+                  onChange={(e) => cambiarPeriodo(Number(e.target.value), mes)}
+                />
               </div>
               <div className="grid gap-1.5">
                 <Label>N° de plan</Label>
                 <Input type="number" value={numero} onChange={(e) => setNumero(Number(e.target.value))} />
               </div>
             </div>
-            <div className="grid gap-1.5">
-              <Label>Fecha de realización (texto)</Label>
-              <Input
-                value={realizacion}
-                onChange={(e) => setRealizacion(e.target.value)}
-                placeholder={`${MESES[mes - 1]} ${anio}`}
-              />
+            <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-1.5">
+                <Label>Desde</Label>
+                <Input
+                  type="date"
+                  value={desde}
+                  onChange={(e) => {
+                    setDesde(e.target.value);
+                    if (e.target.value && e.target.value > hasta) setHasta(e.target.value);
+                  }}
+                />
+              </div>
+              <div className="grid gap-1.5">
+                <Label>Hasta</Label>
+                <Input type="date" value={hasta} min={desde} onChange={(e) => setHasta(e.target.value)} />
+              </div>
             </div>
+            <p className="text-xs text-muted-foreground">
+              El plan abarcará: <span className="font-medium text-foreground">{textoRango(desde, hasta) || "—"}</span>{" "}
+              (puede pasar al mes siguiente).
+            </p>
             {!mesesSugeridos.includes(mes) && (
               <p className="text-xs text-muted-foreground">
                 Nota: este tipo de plan normalmente corresponde a {mesesSugeridos.map((m) => MESES[m - 1]).join(", ")}.
@@ -384,8 +422,9 @@ function Planes() {
             )}
             <p className="text-xs text-muted-foreground">
               {previa.length} equipos programados · {new Set(previa.map((p) => p.fecha)).size} días utilizados ·{" "}
-              {feriadosDelMes.length} feriados en el mes
+              {feriadosRango.length} feriados en el rango
             </p>
+
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setCreando(false)}>
@@ -449,8 +488,8 @@ function DetallePlan({ id, onClose }: { id: string; onClose: () => void }) {
 
   const plan = data?.plan;
   const items = data?.items ?? [];
-  const min = plan ? iso(plan.anio, plan.mes, 1) : "";
-  const max = plan ? iso(plan.anio, plan.mes, new Date(plan.anio, plan.mes, 0).getDate()) : "";
+  const min = plan?.fecha_inicio ?? "";
+  const max = plan?.fecha_fin ?? "";
 
   return (
     <Dialog open onOpenChange={(v) => !v && onClose()}>
@@ -459,19 +498,40 @@ function DetallePlan({ id, onClose }: { id: string; onClose: () => void }) {
           <DialogTitle>
             {plan ? `${plan.tipo === "RESPALDO" ? "Plan de respaldo" : "Plan de mantenimiento"} · ${MESES[plan.mes - 1]} ${plan.anio}` : "Cargando…"}
           </DialogTitle>
-          <DialogDescription>Ajusta fechas y turnos antes de exportar el PDF.</DialogDescription>
+          <DialogDescription>Ajusta el periodo, fechas y turnos antes de exportar el PDF.</DialogDescription>
         </DialogHeader>
 
         {plan && (
           <>
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="grid gap-1.5">
-                <Label>Fecha de realización</Label>
-                <Input
-                  defaultValue={plan.fecha_realizacion}
-                  onBlur={(e) => guardarTexto.mutate({ fecha_realizacion: e.target.value })}
-                />
+                <Label>Periodo del plan (desde / hasta)</Label>
+                <div className="flex gap-2">
+                  <Input
+                    type="date"
+                    defaultValue={plan.fecha_inicio}
+                    onChange={(e) =>
+                      e.target.value &&
+                      guardarTexto.mutate({
+                        fecha_inicio: e.target.value,
+                        fecha_realizacion: textoRango(e.target.value, plan.fecha_fin),
+                      })
+                    }
+                  />
+                  <Input
+                    type="date"
+                    defaultValue={plan.fecha_fin}
+                    onChange={(e) =>
+                      e.target.value &&
+                      guardarTexto.mutate({
+                        fecha_fin: e.target.value,
+                        fecha_realizacion: textoRango(plan.fecha_inicio, e.target.value),
+                      })
+                    }
+                  />
+                </div>
               </div>
+
               <div className="grid gap-1.5">
                 <Label>Elabora / Autoriza</Label>
                 <div className="flex gap-2">

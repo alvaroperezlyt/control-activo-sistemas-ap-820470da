@@ -8,9 +8,9 @@ import {
   GRIS_NO_LABORABLE,
   MESES,
   colorLugar,
-  diaSemana,
-  diasDelMes,
-  iso,
+  diaSemanaISO,
+  rangoFechas,
+  textoRango,
   type ItemPlan,
   type TipoPlan,
 } from "./planes";
@@ -22,6 +22,8 @@ export type PlanPDF = {
   numero: number;
   fecha_elaboracion: string;
   fecha_realizacion: string;
+  fecha_inicio: string;
+  fecha_fin: string;
   objetivo: string;
   alcance: string;
   recursos: string;
@@ -29,6 +31,7 @@ export type PlanPDF = {
   elabora: string;
   autoriza: string;
 };
+
 
 const AZUL_CLARO: [number, number, number] = [222, 235, 247];
 const BORDE: [number, number, number] = [120, 120, 120];
@@ -125,7 +128,8 @@ export function generarPlanPDF(
         { content: "FECHA DE ELABORACION:", styles: { fontStyle: "bold" } },
         fechaCorta(plan.fecha_elaboracion),
         { content: "FECHA DE REALIZACION:", styles: { fontStyle: "bold" } },
-        plan.fecha_realizacion,
+        textoRango(plan.fecha_inicio, plan.fecha_fin) || plan.fecha_realizacion,
+
       ],
       [
         {
@@ -196,8 +200,8 @@ export function generarPlanPDF(
   const anchoL = doc.internal.pageSize.getWidth();
   const top = cabecera(doc, plan, anchoL, logo) + 3;
 
-  const total = diasDelMes(plan.anio, plan.mes);
-  const dias = Array.from({ length: total }, (_, k) => k + 1);
+  const fechas = rangoFechas(plan.fecha_inicio, plan.fecha_fin);
+  const total = Math.max(1, fechas.length);
 
   const marca = plan.tipo === "RESPALDO" ? null : "x";
   const anchoNombre = 68;
@@ -206,12 +210,14 @@ export function generarPlanPDF(
 
   const body = items.map((it, idx) => {
     const fila: (string | { content: string })[] = [String(idx + 1), `${it.personal_nombre} (${it.codigo_interno})`];
-    for (const d of dias) {
-      const activo = it.fecha === iso(plan.anio, plan.mes, d);
+    for (const f of fechas) {
+      const activo = it.fecha === f;
       fila.push(activo ? (marca ?? (it.turno === "MANANA" ? "MAÑANA" : "TARDE")) : "");
     }
     return fila;
   });
+
+  const mesesRango = Array.from(new Set(fechas.map((f) => MESES[Number(f.split("-")[1]) - 1]))).join(" / ");
 
   autoTable(doc, {
     startY: top,
@@ -226,12 +232,13 @@ export function generarPlanPDF(
       valign: "middle",
       overflow: "hidden",
       fillColor: AZUL_CLARO,
+      cellWidth: anchoDia,
     },
     head: [
       [
         { content: "NRO", styles: { fillColor: [255, 255, 255] as [number, number, number] } },
-        { content: `AÑO ${plan.anio} · MES ${MESES[plan.mes - 1]}`, styles: { halign: "right" as const } },
-        ...dias.map((d) => ({ content: String(d) })),
+        { content: `AÑO ${plan.anio} · ${mesesRango}`, styles: { halign: "right" as const } },
+        ...fechas.map((f) => ({ content: String(Number(f.split("-")[2])) })),
       ],
     ],
     headStyles: { fillColor: [31, 56, 100], textColor: 255, fontSize: 4.6, fontStyle: "bold" },
@@ -252,10 +259,9 @@ export function generarPlanPDF(
         data.cell.styles.fillColor = [255, 255, 255];
         return;
       }
-      const dia = col - 1;
-      const fecha = iso(plan.anio, plan.mes, dia);
-      const dow = diaSemana(plan.anio, plan.mes, dia);
-      if (dow === 0 || setFeriados.has(fecha)) {
+      const fecha = fechas[col - 2];
+      if (!fecha) return;
+      if (diaSemanaISO(fecha) === 0 || setFeriados.has(fecha)) {
         data.cell.styles.fillColor = GRIS_NO_LABORABLE;
         return;
       }
@@ -265,6 +271,7 @@ export function generarPlanPDF(
       }
     },
   });
+
 
   // Leyenda
   let ly = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 4;
