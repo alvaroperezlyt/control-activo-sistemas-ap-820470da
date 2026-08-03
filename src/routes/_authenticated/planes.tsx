@@ -486,8 +486,8 @@ function DetallePlan({ id, onClose }: { id: string; onClose: () => void }) {
 
   const plan = data?.plan;
   const items = data?.items ?? [];
-  const min = plan ? iso(plan.anio, plan.mes, 1) : "";
-  const max = plan ? iso(plan.anio, plan.mes, new Date(plan.anio, plan.mes, 0).getDate()) : "";
+  const min = plan?.fecha_inicio ?? "";
+  const max = plan?.fecha_fin ?? "";
 
   return (
     <Dialog open onOpenChange={(v) => !v && onClose()}>
@@ -496,19 +496,40 @@ function DetallePlan({ id, onClose }: { id: string; onClose: () => void }) {
           <DialogTitle>
             {plan ? `${plan.tipo === "RESPALDO" ? "Plan de respaldo" : "Plan de mantenimiento"} · ${MESES[plan.mes - 1]} ${plan.anio}` : "Cargando…"}
           </DialogTitle>
-          <DialogDescription>Ajusta fechas y turnos antes de exportar el PDF.</DialogDescription>
+          <DialogDescription>Ajusta el periodo, fechas y turnos antes de exportar el PDF.</DialogDescription>
         </DialogHeader>
 
         {plan && (
           <>
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="grid gap-1.5">
-                <Label>Fecha de realización</Label>
-                <Input
-                  defaultValue={plan.fecha_realizacion}
-                  onBlur={(e) => guardarTexto.mutate({ fecha_realizacion: e.target.value })}
-                />
+                <Label>Periodo del plan (desde / hasta)</Label>
+                <div className="flex gap-2">
+                  <Input
+                    type="date"
+                    defaultValue={plan.fecha_inicio}
+                    onChange={(e) =>
+                      e.target.value &&
+                      guardarTexto.mutate({
+                        fecha_inicio: e.target.value,
+                        fecha_realizacion: textoRango(e.target.value, plan.fecha_fin),
+                      })
+                    }
+                  />
+                  <Input
+                    type="date"
+                    defaultValue={plan.fecha_fin}
+                    onChange={(e) =>
+                      e.target.value &&
+                      guardarTexto.mutate({
+                        fecha_fin: e.target.value,
+                        fecha_realizacion: textoRango(plan.fecha_inicio, e.target.value),
+                      })
+                    }
+                  />
+                </div>
               </div>
+
               <div className="grid gap-1.5">
                 <Label>Elabora / Autoriza</Label>
                 <div className="flex gap-2">
