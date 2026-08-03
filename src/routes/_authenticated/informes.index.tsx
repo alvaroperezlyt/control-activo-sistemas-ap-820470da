@@ -34,6 +34,20 @@ const informes = [
 ] as const;
 
 function InformesIndex() {
+  const [exportando, setExportando] = useState(false);
+
+  async function exportar() {
+    setExportando(true);
+    try {
+      await exportarTodoExcel();
+      toast.success("Archivo Excel generado");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "No se pudo generar el Excel");
+    } finally {
+      setExportando(false);
+    }
+  }
+
   return (
     <div className="mx-auto max-w-6xl">
       <PageHeader
@@ -58,6 +72,25 @@ function InformesIndex() {
             </div>
           </Link>
         ))}
+
+        <div className="panel p-5">
+          <div className="flex items-start gap-3">
+            <span className="rounded-md bg-secondary p-2 text-secondary-foreground">
+              <FileSpreadsheet className="size-5" />
+            </span>
+            <div className="min-w-0">
+              <h2 className="font-semibold">Exportar todos los datos a Excel</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Un archivo .xlsx con una hoja por tabla: equipos, asignaciones, recepciones, fallas, reparaciones,
+                personal, sucursales, planes, feriados, notificaciones y usuarios autorizados.
+              </p>
+              <Button className="mt-3" onClick={exportar} disabled={exportando}>
+                {exportando ? <Loader2 className="size-4 animate-spin" /> : <FileSpreadsheet className="size-4" />}
+                {exportando ? "Generando..." : "Descargar Excel"}
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
