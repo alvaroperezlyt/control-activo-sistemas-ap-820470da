@@ -24,11 +24,14 @@ import {
   distribuir,
   fechaLarga,
   iso,
+  textoRango,
+  ultimoDiaMesISO,
   type EquipoPlan,
   type ItemPlan,
   type TipoPlan,
   type Turno,
 } from "@/lib/planes";
+
 import { generarPlanPDF } from "@/lib/plan-pdf";
 
 export const Route = createFileRoute("/_authenticated/planes")({
