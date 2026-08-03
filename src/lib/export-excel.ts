@@ -50,7 +50,7 @@ export async function exportarTodoExcel() {
     if (error) throw new Error(`${hoja}: ${error.message}`);
     const filas = (data ?? []) as Record<string, unknown>[];
     const ws = wb.addWorksheet(hoja);
-    const claves = filas.length ? Object.keys(filas[0]) : ["sin datos"];
+    const claves = filas.length && filas[0] ? Object.keys(filas[0]) : ["sin datos"];
 
     ws.columns = claves.map((c) => ({
       header: titulo(c),
