@@ -35,6 +35,34 @@ export const Route = createFileRoute("/_authenticated/equipos/$id")({
 
 function DetalleEquipo() {
   const { id } = Route.useParams();
+  const queryClient = useQueryClient();
+  const [nuevaFalla, setNuevaFalla] = useState(false);
+  const [descripcion, setDescripcion] = useState("");
+  const [reportadoPor, setReportadoPor] = useState("");
+  const [fechaFalla, setFechaFalla] = useState(() => new Date().toISOString().slice(0, 10));
+
+  const crearFalla = useMutation({
+    mutationFn: async () => {
+      if (!descripcion.trim()) throw new Error("Describe la falla.");
+      const { error } = await supabase.from("fallas").insert({
+        equipo_id: id,
+        descripcion: descripcion.trim(),
+        reportado_por: reportadoPor.trim() || "—",
+        fecha: fechaFalla,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["fallas"] });
+      toast.success("Falla registrada");
+      setNuevaFalla(false);
+      setDescripcion("");
+      setReportadoPor("");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+
 
   const { data: equipo, isLoading } = useQuery({
     queryKey: ["equipos", id],
