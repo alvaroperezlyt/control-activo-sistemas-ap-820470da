@@ -31,6 +31,12 @@ const informes = [
     descripcion:
       "Computadoras y teléfonos activos y libres ordenados del más antiguo al más nuevo, con asignado, puesto y características.",
   },
+  {
+    to: "/informes/sucursal",
+    titulo: "Equipos por sucursal / línea de negocio",
+    descripcion:
+      "Equipos asignados agrupados por sucursal o línea de negocio y por tipo, con código, características y responsable.",
+  },
 ] as const;
 
 function InformesIndex() {
