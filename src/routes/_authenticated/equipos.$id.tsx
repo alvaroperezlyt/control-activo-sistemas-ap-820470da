@@ -179,7 +179,20 @@ function DetalleEquipo() {
               {[equipo.marca, equipo.modelo].filter(Boolean).join(" ") || "Sin marca registrada"}
             </p>
           </div>
-          <EstadoBadge estado={equipo.estado_asignacion} />
+          <div className="flex flex-wrap items-center gap-2">
+            <EstadoBadge estado={equipo.estado_asignacion} />
+            {equipo.estado_asignacion === "BAJA" ? (
+              <Button variant="outline" size="sm" onClick={() => reactivar.mutate()} disabled={reactivar.isPending}>
+                <RotateCcw className="size-4" />
+                Reactivar
+              </Button>
+            ) : (
+              <Button variant="destructive" size="sm" onClick={() => setDialogoBaja(true)}>
+                <Ban className="size-4" />
+                Dar de baja
+              </Button>
+            )}
+          </div>
         </div>
 
         <dl className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -191,9 +204,17 @@ function DetalleEquipo() {
             ["Fecha de compra", formatearFecha(equipo.fecha_compra)],
             ["Costo", equipo.costo != null ? `Bs ${equipo.costo}` : "—"],
             ["Color", equipo.color ?? "—"],
+            ...(equipo.estado_asignacion === "BAJA"
+              ? ([
+                  ["Fecha de baja", formatearFecha(equipo.fecha_baja)],
+                  ["Motivo de baja", equipo.motivo_baja ?? "—"],
+                  ["Último asignado", equipo.baja_personal_nombre ?? "—"],
+                ] as [string, string][])
+              : []),
             ...(config?.campos ?? [])
               .filter((c) => !c.base)
               .map((c) => [c.label, datos[c.key] ?? "—"] as [string, string]),
+
           ].map(([label, valor]) => (
             <div key={label as string}>
               <dt className="label-mono">{label}</dt>
