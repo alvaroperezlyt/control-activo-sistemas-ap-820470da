@@ -40,6 +40,9 @@ function DetalleEquipo() {
   const [descripcion, setDescripcion] = useState("");
   const [reportadoPor, setReportadoPor] = useState("");
   const [fechaFalla, setFechaFalla] = useState(() => new Date().toISOString().slice(0, 10));
+  const [dialogoBaja, setDialogoBaja] = useState(false);
+  const [fechaBaja, setFechaBaja] = useState(() => new Date().toISOString().slice(0, 10));
+  const [motivoBaja, setMotivoBaja] = useState("");
 
   const crearFalla = useMutation({
     mutationFn: async () => {
