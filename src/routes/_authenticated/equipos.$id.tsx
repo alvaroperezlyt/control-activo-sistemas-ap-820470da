@@ -327,6 +327,46 @@ function DetalleEquipo() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={dialogoBaja} onOpenChange={setDialogoBaja}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Dar de baja el equipo</DialogTitle>
+            <DialogDescription>
+              {equipo.codigo_interno} · último asignado:{" "}
+              {equipo.personal?.nombre ?? asignaciones.find((a) => !a.fecha_retorno)?.personal_nombre ?? "sin asignación"}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="bfecha">Fecha de baja</Label>
+              <Input id="bfecha" type="date" value={fechaBaja} onChange={(e) => setFechaBaja(e.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="bmotivo">Motivo de la baja</Label>
+              <Textarea
+                id="bmotivo"
+                value={motivoBaja}
+                onChange={(e) => setMotivoBaja(e.target.value)}
+                placeholder="Pérdida, robo, obsolescencia, daño irreparable…"
+                maxLength={1000}
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Se cerrará la asignación vigente con esta fecha y quedará registrado en el historial.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDialogoBaja(false)}>
+              Cancelar
+            </Button>
+            <Button variant="destructive" onClick={() => darDeBaja.mutate()} disabled={darDeBaja.isPending}>
+              Confirmar baja
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 }
