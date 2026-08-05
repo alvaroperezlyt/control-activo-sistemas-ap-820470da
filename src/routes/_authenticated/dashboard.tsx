@@ -102,13 +102,25 @@ function Dashboard() {
           <h2 className="font-semibold">Inventario por tipo</h2>
           <ul className="mt-4 space-y-2">
             {TIPOS_LISTA.map((tipo) => {
-              const cantidad = equipos.filter((e) => e.tipo === tipo).length;
+              const total = equipos.filter((e) => e.tipo === tipo).length;
+              const asignados = equipos.filter((e) => e.tipo === tipo && e.estado_asignacion === "ASIGNADO").length;
+              const libres = equipos.filter((e) => e.tipo === tipo && e.estado_asignacion === "LIBRE").length;
               return (
                 <li key={tipo} className="flex items-center justify-between rounded-md bg-muted/50 px-3 py-2 text-sm">
                   <Link to="/equipos" search={{ tipo }} className="font-medium hover:underline">
                     {TIPOS[tipo].label}
                   </Link>
-                  <span className="font-mono">{cantidad}</span>
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="rounded bg-background px-1.5 py-0.5 font-mono font-medium tabular-nums" title="Total">
+                      {total}
+                    </span>
+                    <span className="rounded bg-primary/10 px-1.5 py-0.5 font-mono tabular-nums text-primary" title="Asignados">
+                      A:{asignados}
+                    </span>
+                    <span className="rounded bg-muted px-1.5 py-0.5 font-mono tabular-nums text-muted-foreground" title="Libres">
+                      L:{libres}
+                    </span>
+                  </div>
                 </li>
               );
             })}
