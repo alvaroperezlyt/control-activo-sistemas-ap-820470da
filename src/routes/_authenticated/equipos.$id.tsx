@@ -65,6 +65,55 @@ function DetalleEquipo() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const darDeBaja = useMutation({
+    mutationFn: async () => {
+      if (!motivoBaja.trim()) throw new Error("Indica el motivo de la baja.");
+      if (!fechaBaja) throw new Error("Indica la fecha de la baja.");
+      const ultimoAsignado = equipo?.personal?.nombre ?? asignaciones.find((a) => !a.fecha_retorno)?.personal_nombre ?? null;
+
+      const { error } = await supabase
+        .from("equipos")
+        .update({
+          estado_asignacion: "BAJA",
+          fecha_baja: fechaBaja,
+          motivo_baja: motivoBaja.trim(),
+          baja_personal_nombre: ultimoAsignado,
+          personal_codigo: null,
+        })
+        .eq("id", id);
+      if (error) throw error;
+
+      const { error: errorAsig } = await supabase
+        .from("asignaciones")
+        .update({ fecha_retorno: fechaBaja })
+        .eq("equipo_id", id)
+        .is("fecha_retorno", null);
+      if (errorAsig) throw errorAsig;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["equipos"] });
+      queryClient.invalidateQueries({ queryKey: ["asignaciones"] });
+      toast.success("Equipo dado de baja");
+      setDialogoBaja(false);
+      setMotivoBaja("");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const reactivar = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase
+        .from("equipos")
+        .update({ estado_asignacion: "LIBRE", fecha_baja: null, motivo_baja: null, baja_personal_nombre: null })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["equipos"] });
+      toast.success("Equipo reactivado como LIBRE");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
 
 
   const { data: equipo, isLoading } = useQuery({
