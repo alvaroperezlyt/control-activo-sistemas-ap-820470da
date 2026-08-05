@@ -123,17 +123,20 @@ export type Database = {
       equipos: {
         Row: {
           almacen_id: string | null
+          baja_personal_nombre: string | null
           codigo_interno: string
           color: string | null
           costo: number | null
           created_at: string
           datos: Json
           estado_asignacion: string
+          fecha_baja: string | null
           fecha_compra: string | null
           id: string
           lugar: string | null
           marca: string | null
           modelo: string | null
+          motivo_baja: string | null
           observaciones: string | null
           personal_codigo: string | null
           serie: string | null
@@ -142,17 +145,20 @@ export type Database = {
         }
         Insert: {
           almacen_id?: string | null
+          baja_personal_nombre?: string | null
           codigo_interno: string
           color?: string | null
           costo?: number | null
           created_at?: string
           datos?: Json
           estado_asignacion?: string
+          fecha_baja?: string | null
           fecha_compra?: string | null
           id?: string
           lugar?: string | null
           marca?: string | null
           modelo?: string | null
+          motivo_baja?: string | null
           observaciones?: string | null
           personal_codigo?: string | null
           serie?: string | null
@@ -161,17 +167,20 @@ export type Database = {
         }
         Update: {
           almacen_id?: string | null
+          baja_personal_nombre?: string | null
           codigo_interno?: string
           color?: string | null
           costo?: number | null
           created_at?: string
           datos?: Json
           estado_asignacion?: string
+          fecha_baja?: string | null
           fecha_compra?: string | null
           id?: string
           lugar?: string | null
           marca?: string | null
           modelo?: string | null
+          motivo_baja?: string | null
           observaciones?: string | null
           personal_codigo?: string | null
           serie?: string | null

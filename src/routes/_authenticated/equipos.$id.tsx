@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, Plus, Ban, RotateCcw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { TIPOS, formatearFecha, type TipoEquipo } from "@/lib/tipos";
 import { EstadoBadge } from "@/components/PageHeader";
@@ -40,6 +40,9 @@ function DetalleEquipo() {
   const [descripcion, setDescripcion] = useState("");
   const [reportadoPor, setReportadoPor] = useState("");
   const [fechaFalla, setFechaFalla] = useState(() => new Date().toISOString().slice(0, 10));
+  const [dialogoBaja, setDialogoBaja] = useState(false);
+  const [fechaBaja, setFechaBaja] = useState(() => new Date().toISOString().slice(0, 10));
+  const [motivoBaja, setMotivoBaja] = useState("");
 
   const crearFalla = useMutation({
     mutationFn: async () => {
@@ -62,6 +65,55 @@ function DetalleEquipo() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const darDeBaja = useMutation({
+    mutationFn: async () => {
+      if (!motivoBaja.trim()) throw new Error("Indica el motivo de la baja.");
+      if (!fechaBaja) throw new Error("Indica la fecha de la baja.");
+      const ultimoAsignado = equipo?.personal?.nombre ?? asignaciones.find((a) => !a.fecha_retorno)?.personal_nombre ?? null;
+
+      const { error } = await supabase
+        .from("equipos")
+        .update({
+          estado_asignacion: "BAJA",
+          fecha_baja: fechaBaja,
+          motivo_baja: motivoBaja.trim(),
+          baja_personal_nombre: ultimoAsignado,
+          personal_codigo: null,
+        })
+        .eq("id", id);
+      if (error) throw error;
+
+      const { error: errorAsig } = await supabase
+        .from("asignaciones")
+        .update({ fecha_retorno: fechaBaja })
+        .eq("equipo_id", id)
+        .is("fecha_retorno", null);
+      if (errorAsig) throw errorAsig;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["equipos"] });
+      queryClient.invalidateQueries({ queryKey: ["asignaciones"] });
+      toast.success("Equipo dado de baja");
+      setDialogoBaja(false);
+      setMotivoBaja("");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const reactivar = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase
+        .from("equipos")
+        .update({ estado_asignacion: "LIBRE", fecha_baja: null, motivo_baja: null, baja_personal_nombre: null })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["equipos"] });
+      toast.success("Equipo reactivado como LIBRE");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
 
 
   const { data: equipo, isLoading } = useQuery({
@@ -127,7 +179,20 @@ function DetalleEquipo() {
               {[equipo.marca, equipo.modelo].filter(Boolean).join(" ") || "Sin marca registrada"}
             </p>
           </div>
-          <EstadoBadge estado={equipo.estado_asignacion} />
+          <div className="flex flex-wrap items-center gap-2">
+            <EstadoBadge estado={equipo.estado_asignacion} />
+            {equipo.estado_asignacion === "BAJA" ? (
+              <Button variant="outline" size="sm" onClick={() => reactivar.mutate()} disabled={reactivar.isPending}>
+                <RotateCcw className="size-4" />
+                Reactivar
+              </Button>
+            ) : (
+              <Button variant="destructive" size="sm" onClick={() => setDialogoBaja(true)}>
+                <Ban className="size-4" />
+                Dar de baja
+              </Button>
+            )}
+          </div>
         </div>
 
         <dl className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -139,9 +204,17 @@ function DetalleEquipo() {
             ["Fecha de compra", formatearFecha(equipo.fecha_compra)],
             ["Costo", equipo.costo != null ? `Bs ${equipo.costo}` : "—"],
             ["Color", equipo.color ?? "—"],
+            ...(equipo.estado_asignacion === "BAJA"
+              ? ([
+                  ["Fecha de baja", formatearFecha(equipo.fecha_baja)],
+                  ["Motivo de baja", equipo.motivo_baja ?? "—"],
+                  ["Último asignado", equipo.baja_personal_nombre ?? "—"],
+                ] as [string, string][])
+              : []),
             ...(config?.campos ?? [])
               .filter((c) => !c.base)
               .map((c) => [c.label, datos[c.key] ?? "—"] as [string, string]),
+
           ].map(([label, valor]) => (
             <div key={label as string}>
               <dt className="label-mono">{label}</dt>
@@ -254,6 +327,46 @@ function DetalleEquipo() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={dialogoBaja} onOpenChange={setDialogoBaja}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Dar de baja el equipo</DialogTitle>
+            <DialogDescription>
+              {equipo.codigo_interno} · último asignado:{" "}
+              {equipo.personal?.nombre ?? asignaciones.find((a) => !a.fecha_retorno)?.personal_nombre ?? "sin asignación"}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="bfecha">Fecha de baja</Label>
+              <Input id="bfecha" type="date" value={fechaBaja} onChange={(e) => setFechaBaja(e.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="bmotivo">Motivo de la baja</Label>
+              <Textarea
+                id="bmotivo"
+                value={motivoBaja}
+                onChange={(e) => setMotivoBaja(e.target.value)}
+                placeholder="Pérdida, robo, obsolescencia, daño irreparable…"
+                maxLength={1000}
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Se cerrará la asignación vigente con esta fecha y quedará registrado en el historial.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDialogoBaja(false)}>
+              Cancelar
+            </Button>
+            <Button variant="destructive" onClick={() => darDeBaja.mutate()} disabled={darDeBaja.isPending}>
+              Confirmar baja
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 }
