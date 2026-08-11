@@ -79,10 +79,19 @@ function Recepciones() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("recepciones")
-        .select("id, fecha, tipo, formulario, revisor, personal_nombre, observaciones, respuestas, fotos")
+        .select(
+          "id, fecha, tipo, formulario, revisor, personal_nombre, personal_codigo, observaciones, respuestas, fotos, asignaciones(equipos(codigo_interno))",
+        )
         .order("fecha", { ascending: false });
       if (error) throw error;
-      return (data ?? []) as RecepcionRow[];
+      type Fila = Omit<RecepcionRow, "codigo_interno"> & {
+        asignaciones?: { equipos: { codigo_interno: string } | null }[] | null;
+      };
+      return ((data ?? []) as unknown as Fila[]).map((r) => ({
+        ...r,
+        codigo_interno: r.asignaciones?.[0]?.equipos?.codigo_interno ?? null,
+      })) as RecepcionRow[];
+
     },
   });
 
