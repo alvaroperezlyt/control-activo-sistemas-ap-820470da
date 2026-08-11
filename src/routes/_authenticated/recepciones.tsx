@@ -186,7 +186,9 @@ function DetalleDialog({
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>
-            {ETIQUETAS[recepcion?.formulario ?? ""] ?? "Recepción"} · {recepcion?.personal_nombre ?? "—"}
+            {ETIQUETAS[recepcion?.formulario ?? ""] ?? "Recepción"}
+            {recepcion?.codigo_interno ? ` · ${recepcion.codigo_interno}` : ""} ·{" "}
+            {recepcion?.personal_nombre ?? "—"}
           </DialogTitle>
           <DialogDescription>
             {formatearFecha(recepcion?.fecha)} · Revisor: {recepcion?.revisor ?? "—"}
@@ -194,7 +196,8 @@ function DetalleDialog({
         </DialogHeader>
 
         <dl className="space-y-3 text-sm">
-          {Object.entries(respuestas).map(([pregunta, valor]) => (
+          {ordenarRespuestas(respuestas).map(([pregunta, valor]) => (
+
             <div key={pregunta}>
               <dt className="font-medium">{pregunta}</dt>
               <dd className="text-muted-foreground">{valor}</dd>
