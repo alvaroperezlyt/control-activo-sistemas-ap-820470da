@@ -30,10 +30,25 @@ type RecepcionRow = {
   formulario: string | null;
   revisor: string | null;
   personal_nombre: string | null;
+  personal_codigo: string | null;
   observaciones: string | null;
   respuestas: unknown;
   fotos: unknown;
+  codigo_interno?: string | null;
 };
+
+/** Ordena las respuestas por el número inicial de la pregunta ("3. Teclado"). */
+function ordenarRespuestas(respuestas: Record<string, string>) {
+  return Object.entries(respuestas).sort(([a], [b]) => {
+    const na = Number.parseInt(a, 10);
+    const nb = Number.parseInt(b, 10);
+    if (Number.isNaN(na) && Number.isNaN(nb)) return a.localeCompare(b, "es");
+    if (Number.isNaN(na)) return 1;
+    if (Number.isNaN(nb)) return -1;
+    return na - nb;
+  });
+}
+
 
 export const Route = createFileRoute("/_authenticated/recepciones")({
   head: () => ({
