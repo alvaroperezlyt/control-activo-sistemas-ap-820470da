@@ -196,6 +196,7 @@ function Equipos() {
             <thead>
               <tr className="border-b border-border text-left">
                 <th className="pb-2 font-medium text-muted-foreground">Código</th>
+                {esLineas && <th className="pb-2 font-medium text-muted-foreground">Nro. corto</th>}
                 <th className="pb-2 font-medium text-muted-foreground">Tipo</th>
                 <th className="pb-2 font-medium text-muted-foreground">Marca / Modelo</th>
                 <th className="pb-2 font-medium text-muted-foreground">Asignado a</th>
