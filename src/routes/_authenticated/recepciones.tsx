@@ -107,8 +107,8 @@ function Recepciones() {
         </Button>
       </PageHeader>
 
-      <div className="panel overflow-x-auto p-4">
-        <table className="w-full text-sm">
+      <div className="panel tabla-scroll px-4 pb-4">
+        <table className="w-full text-sm tabla-anclada">
           <thead>
             <tr className="border-b border-border text-left">
               <th className="pb-2 font-medium text-muted-foreground">Fecha</th>

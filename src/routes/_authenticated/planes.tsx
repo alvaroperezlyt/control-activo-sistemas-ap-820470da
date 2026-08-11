@@ -263,8 +263,8 @@ function Planes() {
       <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
         <div className="panel p-4">
           <h2 className="font-semibold">Planes generados</h2>
-          <div className="mt-3 overflow-x-auto">
-            <table className="w-full text-sm">
+          <div className="mt-3 tabla-scroll">
+            <table className="w-full text-sm tabla-anclada">
               <thead>
                 <tr className="border-b border-border text-left">
                   <th className="pb-2 font-medium text-muted-foreground">Tipo</th>
@@ -565,8 +565,8 @@ function DetallePlan({ id, onClose }: { id: string; onClose: () => void }) {
               </div>
             </div>
 
-            <div className="mt-2 overflow-x-auto">
-              <table className="w-full text-sm">
+            <div className="mt-2 tabla-scroll">
+              <table className="w-full text-sm tabla-anclada">
                 <thead>
                   <tr className="border-b border-border text-left">
                     <th className="pb-2 font-medium text-muted-foreground">#</th>
