@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -125,6 +125,32 @@ function Asignaciones() {
     },
     onError: (e: Error) => toast.error(e.message),
   });
+
+  const grupos = useMemo(() => {
+    const mapa = new Map<
+      string,
+      { codigo: string | null; nombre: string; items: typeof asignaciones; ultima: string }
+    >();
+    for (const a of asignaciones) {
+      const clave = a.personal_codigo ?? a.personal_nombre;
+      const actual = mapa.get(clave);
+      if (actual) {
+        actual.items.push(a);
+        if (a.fecha_entrega > actual.ultima) actual.ultima = a.fecha_entrega;
+      } else {
+        mapa.set(clave, {
+          codigo: a.personal_codigo,
+          nombre: a.personal_nombre,
+          items: [a],
+          ultima: a.fecha_entrega,
+        });
+      }
+    }
+    const lista = [...mapa.values()];
+    lista.sort((x, y) => (x.ultima < y.ultima ? 1 : x.ultima > y.ultima ? -1 : 0));
+    for (const g of lista) g.items.sort((p, q) => (p.fecha_entrega < q.fecha_entrega ? 1 : -1));
+    return lista;
+  }, [asignaciones]);
 
   return (
     <div className="mx-auto max-w-5xl">
