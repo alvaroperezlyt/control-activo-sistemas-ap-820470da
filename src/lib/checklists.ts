@@ -217,8 +217,11 @@ export const FORMULARIOS: Record<FormularioId, Formulario> = {
       { key: "pantalla_encendida", label: "Pantalla encendida" },
       { key: "tapa_inferior", label: "Tapa inferior" },
       { key: "posterior_pantalla", label: "Posterior de la pantalla" },
-      { key: "puertos_accesorios", label: "Puertos (USB, HDMI, JACK) y accesorios (cargador, mouse, etc.)" },
+      { key: "puertos_accesorios", label: "Fotografía lado 1" },
+      { key: "lado_2", label: "Fotografía lado 2" },
+      { key: "cargador", label: "Fotografía cargador" },
     ],
+
   },
 
   ESCRITORIO: {
