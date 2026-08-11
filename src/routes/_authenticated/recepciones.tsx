@@ -30,10 +30,25 @@ type RecepcionRow = {
   formulario: string | null;
   revisor: string | null;
   personal_nombre: string | null;
+  personal_codigo: string | null;
   observaciones: string | null;
   respuestas: unknown;
   fotos: unknown;
+  codigo_interno?: string | null;
 };
+
+/** Ordena las respuestas por el número inicial de la pregunta ("3. Teclado"). */
+function ordenarRespuestas(respuestas: Record<string, string>) {
+  return Object.entries(respuestas).sort(([a], [b]) => {
+    const na = Number.parseInt(a, 10);
+    const nb = Number.parseInt(b, 10);
+    if (Number.isNaN(na) && Number.isNaN(nb)) return a.localeCompare(b, "es");
+    if (Number.isNaN(na)) return 1;
+    if (Number.isNaN(nb)) return -1;
+    return na - nb;
+  });
+}
+
 
 export const Route = createFileRoute("/_authenticated/recepciones")({
   head: () => ({
@@ -64,10 +79,19 @@ function Recepciones() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("recepciones")
-        .select("id, fecha, tipo, formulario, revisor, personal_nombre, observaciones, respuestas, fotos")
+        .select(
+          "id, fecha, tipo, formulario, revisor, personal_nombre, personal_codigo, observaciones, respuestas, fotos, asignaciones(equipos(codigo_interno))",
+        )
         .order("fecha", { ascending: false });
       if (error) throw error;
-      return (data ?? []) as RecepcionRow[];
+      type Fila = Omit<RecepcionRow, "codigo_interno"> & {
+        asignaciones?: { equipos: { codigo_interno: string } | null }[] | null;
+      };
+      return ((data ?? []) as unknown as Fila[]).map((r) => ({
+        ...r,
+        codigo_interno: r.asignaciones?.[0]?.equipos?.codigo_interno ?? null,
+      })) as RecepcionRow[];
+
     },
   });
 
@@ -162,7 +186,9 @@ function DetalleDialog({
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>
-            {ETIQUETAS[recepcion?.formulario ?? ""] ?? "Recepción"} · {recepcion?.personal_nombre ?? "—"}
+            {ETIQUETAS[recepcion?.formulario ?? ""] ?? "Recepción"}
+            {recepcion?.codigo_interno ? ` · ${recepcion.codigo_interno}` : ""} ·{" "}
+            {recepcion?.personal_nombre ?? "—"}
           </DialogTitle>
           <DialogDescription>
             {formatearFecha(recepcion?.fecha)} · Revisor: {recepcion?.revisor ?? "—"}
@@ -170,7 +196,8 @@ function DetalleDialog({
         </DialogHeader>
 
         <dl className="space-y-3 text-sm">
-          {Object.entries(respuestas).map(([pregunta, valor]) => (
+          {ordenarRespuestas(respuestas).map(([pregunta, valor]) => (
+
             <div key={pregunta}>
               <dt className="font-medium">{pregunta}</dt>
               <dd className="text-muted-foreground">{valor}</dd>
