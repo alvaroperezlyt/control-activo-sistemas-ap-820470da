@@ -70,18 +70,34 @@ function Equipos() {
     },
   });
 
+  const esLineas = tipoFiltro === "LINEA";
+
+  const corto = (e: { datos?: unknown }) => {
+    const d = (e.datos ?? {}) as Record<string, string | null>;
+    return d["corto"] ?? "";
+  };
+
   const filtrados = useMemo(() => {
     const q = texto.trim().toLowerCase();
-    return equipos.filter((e) => {
+    const lista = equipos.filter((e) => {
       if (tipoFiltro && e.tipo !== tipoFiltro) return false;
       if (almacenFiltro && e.almacen_id !== almacenFiltro) return false;
       if (estado !== "TODOS" && e.estado_asignacion !== estado) return false;
       if (!q) return true;
-      return [e.codigo_interno, e.marca, e.modelo, e.serie, e.personal?.nombre, e.lugar]
+      return [e.codigo_interno, e.marca, e.modelo, e.serie, e.personal?.nombre, e.lugar, corto(e)]
         .filter(Boolean)
         .some((v) => String(v).toLowerCase().includes(q));
     });
-  }, [equipos, texto, estado, tipoFiltro, almacenFiltro]);
+    if (!esLineas) return lista;
+    return [...lista].sort((a, b) => {
+      const na = Number(String(corto(a)).replace(/\D/g, ""));
+      const nb = Number(String(corto(b)).replace(/\D/g, ""));
+      const va = Number.isFinite(na) && String(corto(a)).trim() ? na : Number.POSITIVE_INFINITY;
+      const vb = Number.isFinite(nb) && String(corto(b)).trim() ? nb : Number.POSITIVE_INFINITY;
+      if (va !== vb) return va - vb;
+      return String(a.codigo_interno).localeCompare(String(b.codigo_interno));
+    });
+  }, [equipos, texto, estado, tipoFiltro, almacenFiltro, esLineas]);
 
 
   return (
@@ -180,6 +196,7 @@ function Equipos() {
             <thead>
               <tr className="border-b border-border text-left">
                 <th className="pb-2 font-medium text-muted-foreground">Código</th>
+                {esLineas && <th className="pb-2 font-medium text-muted-foreground">Nro. corto</th>}
                 <th className="pb-2 font-medium text-muted-foreground">Tipo</th>
                 <th className="pb-2 font-medium text-muted-foreground">Marca / Modelo</th>
                 <th className="pb-2 font-medium text-muted-foreground">Asignado a</th>
@@ -191,14 +208,14 @@ function Equipos() {
             <tbody>
               {isLoading && (
                 <tr>
-                  <td colSpan={7} className="py-6 text-muted-foreground">
+                  <td colSpan={esLineas ? 8 : 7} className="py-6 text-muted-foreground">
                     Cargando…
                   </td>
                 </tr>
               )}
               {!isLoading && filtrados.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="py-6 text-muted-foreground">
+                  <td colSpan={esLineas ? 8 : 7} className="py-6 text-muted-foreground">
                     Sin equipos que coincidan con el filtro.
                   </td>
                 </tr>
@@ -210,6 +227,7 @@ function Equipos() {
                       {e.codigo_interno}
                     </Link>
                   </td>
+                  {esLineas && <td className="py-2 font-mono">{corto(e) || "—"}</td>}
                   <td className="py-2">{TIPOS[e.tipo as TipoEquipo]?.labelSingular ?? e.tipo}</td>
                   <td className="py-2">{[e.marca, e.modelo].filter(Boolean).join(" ") || "—"}</td>
                   <td className="py-2">{e.personal?.nombre ?? "—"}</td>
