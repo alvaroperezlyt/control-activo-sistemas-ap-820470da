@@ -70,18 +70,34 @@ function Equipos() {
     },
   });
 
+  const esLineas = tipoFiltro === "LINEA";
+
+  const corto = (e: { datos?: unknown }) => {
+    const d = (e.datos ?? {}) as Record<string, string | null>;
+    return d["corto"] ?? "";
+  };
+
   const filtrados = useMemo(() => {
     const q = texto.trim().toLowerCase();
-    return equipos.filter((e) => {
+    const lista = equipos.filter((e) => {
       if (tipoFiltro && e.tipo !== tipoFiltro) return false;
       if (almacenFiltro && e.almacen_id !== almacenFiltro) return false;
       if (estado !== "TODOS" && e.estado_asignacion !== estado) return false;
       if (!q) return true;
-      return [e.codigo_interno, e.marca, e.modelo, e.serie, e.personal?.nombre, e.lugar]
+      return [e.codigo_interno, e.marca, e.modelo, e.serie, e.personal?.nombre, e.lugar, corto(e)]
         .filter(Boolean)
         .some((v) => String(v).toLowerCase().includes(q));
     });
-  }, [equipos, texto, estado, tipoFiltro, almacenFiltro]);
+    if (!esLineas) return lista;
+    return [...lista].sort((a, b) => {
+      const na = Number(String(corto(a)).replace(/\D/g, ""));
+      const nb = Number(String(corto(b)).replace(/\D/g, ""));
+      const va = Number.isFinite(na) && String(corto(a)).trim() ? na : Number.POSITIVE_INFINITY;
+      const vb = Number.isFinite(nb) && String(corto(b)).trim() ? nb : Number.POSITIVE_INFINITY;
+      if (va !== vb) return va - vb;
+      return String(a.codigo_interno).localeCompare(String(b.codigo_interno));
+    });
+  }, [equipos, texto, estado, tipoFiltro, almacenFiltro, esLineas]);
 
 
   return (
