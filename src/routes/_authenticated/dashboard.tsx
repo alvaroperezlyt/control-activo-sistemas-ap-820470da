@@ -148,8 +148,8 @@ function Dashboard() {
 
       <div className="panel mt-6 p-5">
         <h2 className="font-semibold">Últimas asignaciones</h2>
-        <div className="mt-4 overflow-x-auto">
-          <table className="w-full text-sm">
+        <div className="mt-4 tabla-scroll">
+          <table className="w-full text-sm tabla-anclada">
             <thead>
               <tr className="border-b border-border text-left">
                 <th className="pb-2 font-medium text-muted-foreground">Equipo</th>
