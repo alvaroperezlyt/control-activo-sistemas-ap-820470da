@@ -166,6 +166,7 @@ function Asignaciones() {
           <Label>Filtrar por persona</Label>
           <PersonalSelect
             value={filtroPersona}
+            soloActivos
             onChange={(codigo) => setFiltroPersona(codigo)}
             placeholder="Todas las personas…"
           />
@@ -177,68 +178,74 @@ function Asignaciones() {
         )}
       </div>
 
-      <div className="panel tabla-scroll px-4 pb-4">
-        <table className="w-full text-sm tabla-anclada">
-          <thead>
-            <tr className="border-b border-border text-left">
-              <th className="pb-2 font-medium text-muted-foreground">Equipo</th>
-              <th className="pb-2 font-medium text-muted-foreground">Tipo</th>
-              <th className="pb-2 font-medium text-muted-foreground">Persona</th>
-              <th className="pb-2 font-medium text-muted-foreground">Entrega</th>
-              <th className="pb-2 font-medium text-muted-foreground">Devolución</th>
-              <th className="pb-2 font-medium text-muted-foreground">Estado</th>
-              <th className="pb-2 font-medium text-muted-foreground">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {asignaciones.length === 0 && (
-              <tr>
-                <td colSpan={7} className="py-6 text-muted-foreground">
-                  Sin asignaciones registradas.
-                </td>
-              </tr>
-            )}
-            {asignaciones.map((a) => (
-              <tr key={a.id} className="border-b border-border/60 last:border-0">
-                <td className="py-2 font-mono">
-                  {a.equipos ? (
-                    <Link to="/equipos/$id" params={{ id: a.equipos.id }} className="hover:underline">
-                      {a.equipos.codigo_interno}
-                    </Link>
-                  ) : (
-                    "—"
-                  )}
-                </td>
-                <td className="py-2">
-                  {a.equipos ? (TIPOS[a.equipos.tipo as TipoEquipo]?.labelSingular ?? a.equipos.tipo) : "—"}
-                </td>
-                <td className="py-2">{a.personal_nombre}</td>
-                <td className="py-2">{formatearFecha(a.fecha_entrega)}</td>
-                <td className="py-2">{formatearFecha(a.fecha_retorno)}</td>
-                <td className="py-2">
-                  <EstadoBadge estado={a.fecha_retorno ? "DEVUELTO" : "ASIGNADO"} />
-                </td>
-                <td className="py-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() =>
-                      setEditando({
-                        id: a.id,
-                        entrega: a.fecha_entrega,
-                        retorno: a.fecha_retorno ?? "",
-                      })
-                    }
-                  >
-                    <Pencil className="size-4" />
-                    Editar fechas
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {grupos.length === 0 && (
+        <div className="panel p-6 text-sm text-muted-foreground">Sin asignaciones registradas.</div>
+      )}
+
+      <div className="grid gap-4 md:grid-cols-2">
+        {grupos.map((g) => {
+          const vigentes = g.items.filter((i) => !i.fecha_retorno).length;
+          return (
+            <div key={g.codigo ?? g.nombre} className="panel p-4">
+              <div className="mb-3 flex items-start justify-between gap-2 border-b border-border pb-2">
+                <div>
+                  <h3 className="font-medium">{g.nombre}</h3>
+                  <p className="text-xs text-muted-foreground">
+                    {g.codigo ? `${g.codigo} · ` : ""}
+                    {vigentes} vigente(s) de {g.items.length}
+                  </p>
+                </div>
+                <span className="text-xs text-muted-foreground">
+                  Última: {formatearFecha(g.ultima)}
+                </span>
+              </div>
+              <ul className="space-y-2">
+                {g.items.map((a) => (
+                  <li key={a.id} className="flex items-center justify-between gap-3 text-sm">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        {a.equipos ? (
+                          <Link
+                            to="/equipos/$id"
+                            params={{ id: a.equipos.id }}
+                            className="font-mono hover:underline"
+                          >
+                            {a.equipos.codigo_interno}
+                          </Link>
+                        ) : (
+                          <span className="font-mono">—</span>
+                        )}
+                        <EstadoBadge estado={a.fecha_retorno ? "DEVUELTO" : "ASIGNADO"} />
+                      </div>
+                      <p className="truncate text-xs text-muted-foreground">
+                        {a.equipos
+                          ? (TIPOS[a.equipos.tipo as TipoEquipo]?.labelSingular ?? a.equipos.tipo)
+                          : "—"}{" "}
+                        · {formatearFecha(a.fecha_entrega)}
+                        {a.fecha_retorno ? ` → ${formatearFecha(a.fecha_retorno)}` : ""}
+                      </p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() =>
+                        setEditando({
+                          id: a.id,
+                          entrega: a.fecha_entrega,
+                          retorno: a.fecha_retorno ?? "",
+                        })
+                      }
+                    >
+                      <Pencil className="size-4" />
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          );
+        })}
       </div>
+
 
       <Dialog open={editando !== null} onOpenChange={(v) => !v && setEditando(null)}>
         <DialogContent>
