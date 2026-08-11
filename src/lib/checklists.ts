@@ -119,7 +119,11 @@ export const FORMULARIOS: Record<FormularioId, Formulario> = {
       { key: "pantalla_apagada", label: "Fotografía de la pantalla apagada (resaltar grietas)" },
       { key: "pantalla_encendida", label: "Fotografía de la pantalla encendida (resaltar fallas)" },
       { key: "posterior", label: "Fotografía de la parte posterior (resaltar grietas)" },
-      { key: "marcos", label: "Fotografía de los marcos incluyendo botonera y puertos" },
+      { key: "marcos", label: "Fotografía lado 1" },
+      { key: "lado_2", label: "Fotografía lado 2" },
+      { key: "lado_3", label: "Fotografía lado 3" },
+      { key: "lado_4", label: "Fotografía lado 4" },
+      { key: "cargador", label: "Fotografía cargador" },
     ],
   },
 
