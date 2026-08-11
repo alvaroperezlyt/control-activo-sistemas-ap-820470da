@@ -208,14 +208,14 @@ function Equipos() {
             <tbody>
               {isLoading && (
                 <tr>
-                  <td colSpan={7} className="py-6 text-muted-foreground">
+                  <td colSpan={esLineas ? 8 : 7} className="py-6 text-muted-foreground">
                     Cargando…
                   </td>
                 </tr>
               )}
               {!isLoading && filtrados.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="py-6 text-muted-foreground">
+                  <td colSpan={esLineas ? 8 : 7} className="py-6 text-muted-foreground">
                     Sin equipos que coincidan con el filtro.
                   </td>
                 </tr>
@@ -227,6 +227,7 @@ function Equipos() {
                       {e.codigo_interno}
                     </Link>
                   </td>
+                  {esLineas && <td className="py-2 font-mono">{corto(e) || "—"}</td>}
                   <td className="py-2">{TIPOS[e.tipo as TipoEquipo]?.labelSingular ?? e.tipo}</td>
                   <td className="py-2">{[e.marca, e.modelo].filter(Boolean).join(" ") || "—"}</td>
                   <td className="py-2">{e.personal?.nombre ?? "—"}</td>
