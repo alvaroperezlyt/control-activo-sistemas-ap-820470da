@@ -45,7 +45,9 @@ function Personal() {
     mutationFn: () => sincronizar(),
     onSuccess: (r) => {
       queryClient.invalidateQueries();
-      toast.success(`${r.total} registros sincronizados · ${r.desvinculados} desvinculados`);
+      toast.success(
+        `${r.total} registros sincronizados · ${r.desvinculados} desvinculados${r.nuevos ? ` · ${r.nuevos} nuevo(s) activo(s)` : ""}`,
+      );
     },
     onError: (e: Error) => toast.error(e.message),
   });
