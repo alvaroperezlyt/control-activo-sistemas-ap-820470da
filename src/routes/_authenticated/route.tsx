@@ -42,7 +42,6 @@ const enlaces = [
   { to: "/planes", label: "Planes y mantenimiento", icon: CalendarCheck },
   { to: "/personal", label: "Personal (RRHH)", icon: Users },
   { to: "/informes", label: "Informes", icon: FileBarChart },
-  { to: "/acerca-de", label: "Acerca de", icon: Info },
 ] as const;
 
 function Shell() {
@@ -111,6 +110,14 @@ function Shell() {
                 {pendientes}
               </span>
             )}
+          </Link>
+          <Link
+            to="/acerca-de"
+            className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-sidebar-foreground/80 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+            activeProps={{ className: "bg-sidebar-primary text-sidebar-primary-foreground font-semibold shadow-sm" }}
+          >
+            <Info className="size-4" />
+            Acerca de
           </Link>
         </nav>
         <div className="border-t border-sidebar-border p-3">
