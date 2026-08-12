@@ -141,7 +141,10 @@ function Equipos() {
             value={tipoFiltro ?? "TODOS"}
             onValueChange={(v) =>
               navigate({
-                search: (prev: Busqueda) => ({ ...prev, tipo: v === "TODOS" ? undefined : (v as TipoEquipo) }),
+                search: (prev: Busqueda) => {
+                  const { tipo: _omitido, ...resto } = prev;
+                  return v === "TODOS" ? resto : { ...resto, tipo: v as TipoEquipo };
+                },
               })
             }
           >
