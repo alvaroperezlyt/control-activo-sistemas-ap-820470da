@@ -163,7 +163,12 @@ function Equipos() {
           <Select
             value={almacenFiltro ?? "TODOS"}
             onValueChange={(v) =>
-              navigate({ search: (prev: Busqueda) => ({ ...prev, almacen: v === "TODOS" ? undefined : v }) })
+              navigate({
+                search: (prev: Busqueda) => {
+                  const { almacen: _omitido, ...resto } = prev;
+                  return v === "TODOS" ? resto : { ...resto, almacen: v };
+                },
+              })
             }
           >
             <SelectTrigger className="w-60">
