@@ -206,7 +206,7 @@ function DetalleDialog({
           {recepcion?.observaciones && (
             <div>
               <dt className="font-medium">Observaciones</dt>
-              <dd className="text-muted-foreground">{recepcion.observaciones}</dd>
+              <dd className="whitespace-pre-line text-muted-foreground">{recepcion.observaciones}</dd>
             </div>
           )}
         </dl>
