@@ -36,7 +36,7 @@ export async function sincronizarPersonalEnBase() {
         tipo: "NUEVO_PERSONAL",
         personal_codigo: p.codigo,
         personal_nombre: p.nombre,
-        titulo: `Nuevo personal activo: ${p.nombre}`,
+        titulo: `Nuevo personal activo: ${p.nombre}${p.puesto ? ` · ${p.puesto}` : ""}`,
         mensaje: `${p.nombre} (${p.codigo})${p.puesto ? ` · ${p.puesto}` : ""} figura como ACTIVO en la lista de RRHH. Prevé la posible asignación de equipos informáticos.`,
       })),
       { onConflict: "tipo,personal_codigo", ignoreDuplicates: true },
