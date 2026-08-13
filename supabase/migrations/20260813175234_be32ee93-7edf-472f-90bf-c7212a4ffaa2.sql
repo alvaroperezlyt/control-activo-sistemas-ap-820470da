@@ -1,0 +1,2 @@
+ALTER TABLE public.recepciones DROP CONSTRAINT IF EXISTS recepciones_tipo_check;
+ALTER TABLE public.recepciones ADD CONSTRAINT recepciones_tipo_check CHECK (tipo = ANY (ARRAY['COMPUTADORA','TELEFONO','IMPRESORA','LINEA','RED','OTRO','TELEFONO_LINEA']));
