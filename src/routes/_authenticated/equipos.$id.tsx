@@ -198,6 +198,7 @@ function DetalleEquipo() {
         <dl className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[
             ["Asignado a", equipo.personal?.nombre ?? "—"],
+            ["Cargo del asignado", equipo.personal?.puesto ?? "—"],
             ["Sucursal/Línea de Negocio", equipo.almacenes ? `${equipo.almacenes.nombre} (${equipo.almacenes.lugar})` : "—"],
             ["Lugar", equipo.lugar ?? "—"],
             ["Serie", equipo.serie ?? "—"],
