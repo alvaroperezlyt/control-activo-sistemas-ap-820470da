@@ -224,7 +224,9 @@ function DetalleEquipo() {
         </dl>
 
         {equipo.observaciones && (
-          <p className="mt-6 rounded-md bg-muted/50 p-3 text-sm text-muted-foreground">{equipo.observaciones}</p>
+          <p className="mt-6 whitespace-pre-line rounded-md bg-muted/50 p-3 text-sm text-muted-foreground">
+            {equipo.observaciones}
+          </p>
         )}
       </div>
 
