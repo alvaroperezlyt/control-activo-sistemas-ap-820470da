@@ -121,7 +121,7 @@ function DetalleEquipo() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("equipos")
-        .select("*, personal(nombre, estado), almacenes(nombre, lugar)")
+        .select("*, personal(nombre, puesto, estado), almacenes(nombre, lugar)")
         .eq("id", id)
         .maybeSingle();
       if (error) throw error;
