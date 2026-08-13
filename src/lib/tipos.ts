@@ -54,7 +54,7 @@ export const TIPOS: Record<
       ...camposBase,
       { key: "imei1", label: "IMEI 1" },
       { key: "imei2", label: "IMEI 2" },
-      { key: "cargo", label: "Cargo del asignado" },
+      
       { key: "accesorios", label: "Accesorios incluidos", tipo: "textarea", ancho: "full" },
     ],
   },
