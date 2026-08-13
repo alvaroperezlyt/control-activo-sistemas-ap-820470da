@@ -242,7 +242,9 @@ function DetalleEquipo() {
                   {formatearFecha(a.fecha_entrega)} → {a.fecha_retorno ? formatearFecha(a.fecha_retorno) : "vigente"}
                 </span>
               </div>
-              {a.observaciones && <p className="mt-1 text-muted-foreground">{a.observaciones}</p>}
+              {a.observaciones && (
+                <p className="mt-1 whitespace-pre-line text-muted-foreground">{a.observaciones}</p>
+              )}
             </li>
           ))}
         </ul>
