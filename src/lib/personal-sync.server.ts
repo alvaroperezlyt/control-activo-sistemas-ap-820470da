@@ -61,6 +61,16 @@ export async function sincronizarPersonalEnBase() {
     if (errorAvisos) throw new Error(errorAvisos.message);
   }
 
+  // Quien vuelve a estar ACTIVO ya no debe conservar el aviso de desvinculación.
+  if (reactivados.length > 0) {
+    await supabaseAdmin
+      .from("notificaciones")
+      .delete()
+      .eq("tipo", "DESVINCULACION")
+      .in("personal_codigo", reactivados.map((p) => p.codigo));
+  }
+
+
   return {
     total: unicos.size,
     desvinculados: [...unicos.values()].filter((p) => p.estado === "DESVINCULADO").length,
