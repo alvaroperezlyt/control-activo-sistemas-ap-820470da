@@ -155,7 +155,7 @@ function Dashboard() {
                   {a.titulo}
                 </span>
                 <span className="shrink-0 font-mono text-xs tabular-nums text-muted-foreground">
-                  {formatearFecha(a.created_at)}
+                  {new Date(a.created_at).toLocaleDateString("es-BO", { day: "2-digit", month: "2-digit" })}
                 </span>
               </li>
             ))}
