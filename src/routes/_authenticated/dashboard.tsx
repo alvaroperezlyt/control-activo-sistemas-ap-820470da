@@ -50,6 +50,18 @@ function Dashboard() {
     },
   });
 
+  const { data: pendientes = 0 } = useQuery({
+    queryKey: ["notificaciones", "no-leidas"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("notificaciones")
+        .select("id", { count: "exact", head: true })
+        .eq("leida", false);
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+
   const { data: ultimasAsignaciones = [] } = useQuery({
     queryKey: ["asignaciones", "recientes"],
     queryFn: async () => {
