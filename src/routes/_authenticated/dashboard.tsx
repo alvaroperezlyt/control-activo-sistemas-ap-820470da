@@ -42,6 +42,7 @@ function Dashboard() {
       const { data, error } = await supabase
         .from("notificaciones")
         .select("id, titulo, mensaje, leida, created_at")
+        .order("leida", { ascending: true })
         .order("created_at", { ascending: false })
         .limit(5);
       if (error) throw error;
