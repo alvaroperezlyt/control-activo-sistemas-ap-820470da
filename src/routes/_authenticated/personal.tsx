@@ -46,7 +46,7 @@ function Personal() {
     onSuccess: (r) => {
       queryClient.invalidateQueries();
       toast.success(
-        `${r.total} registros sincronizados · ${r.desvinculados} desvinculados${r.nuevos ? ` · ${r.nuevos} nuevo(s) activo(s)` : ""}`,
+        `${r.total} registros sincronizados · ${r.desvinculados} desvinculados${r.nuevos ? ` · ${r.nuevos} nuevo(s) activo(s)` : ""}${r.reactivados ? ` · ${r.reactivados} reincorporado(s)` : ""}`,
       );
     },
     onError: (e: Error) => toast.error(e.message),
