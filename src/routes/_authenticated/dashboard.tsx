@@ -80,7 +80,7 @@ function Dashboard() {
     onSuccess: (r) => {
       queryClient.invalidateQueries();
       toast.success(
-        `Personal sincronizado: ${r.total} registros, ${r.desvinculados} desvinculados${r.nuevos ? `, ${r.nuevos} nuevo(s) activo(s)` : ""}.`,
+        `Personal sincronizado: ${r.total} registros, ${r.desvinculados} desvinculados${r.nuevos ? `, ${r.nuevos} nuevo(s) activo(s)` : ""}${r.reactivados ? `, ${r.reactivados} reincorporado(s)` : ""}.`,
       );
     },
     onError: (e: Error) => toast.error(e.message),
