@@ -130,19 +130,33 @@ function Dashboard() {
           </ul>
         </div>
 
-        <div className="panel p-5">
-          <div className="flex items-center justify-between">
-            <h2 className="font-semibold">Avisos recientes</h2>
-            <Link to="/notificaciones" className="text-sm text-primary hover:underline">
+        <div className="panel flex max-h-72 flex-col p-5">
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="font-semibold">
+              Avisos recientes
+              {pendientes > 0 && (
+                <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
+                  {pendientes} sin leer
+                </span>
+              )}
+            </h2>
+            <Link to="/notificaciones" className="shrink-0 text-sm text-primary hover:underline">
               Ver todos
             </Link>
           </div>
-          <ul className="mt-4 space-y-3">
-            {avisos.length === 0 && <li className="text-sm text-muted-foreground">Sin avisos.</li>}
+          <ul className="mt-3 min-h-0 flex-1 divide-y divide-border/60 overflow-y-auto">
+            {avisos.length === 0 && <li className="py-2 text-sm text-muted-foreground">Sin avisos.</li>}
             {avisos.map((a) => (
-              <li key={a.id} className="rounded-md border border-border p-3">
-                <p className="text-sm font-medium">{a.titulo}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{a.mensaje}</p>
+              <li key={a.id} className="flex items-center gap-2 py-2" title={a.mensaje}>
+                <span
+                  className={`size-1.5 shrink-0 rounded-full ${a.leida ? "bg-muted-foreground/30" : "bg-primary"}`}
+                />
+                <span className={`min-w-0 flex-1 truncate text-sm ${a.leida ? "text-muted-foreground" : "font-medium"}`}>
+                  {a.titulo}
+                </span>
+                <span className="shrink-0 font-mono text-xs tabular-nums text-muted-foreground">
+                  {formatearFecha(a.created_at)}
+                </span>
               </li>
             ))}
           </ul>
