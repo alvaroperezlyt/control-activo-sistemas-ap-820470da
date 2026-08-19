@@ -9,12 +9,12 @@ export async function sincronizarPersonalEnBase() {
   // Una misma persona puede repetirse en la hoja: se conserva la última fila.
   const unicos = new Map(personal.map((p) => [p.codigo, p]));
 
-  // Códigos ya existentes en la base, para detectar altas nuevas.
+  // Estado previo en la base, para detectar altas nuevas y reactivaciones.
   const { data: existentes, error: errorExistentes } = await supabaseAdmin
     .from("personal")
-    .select("codigo");
+    .select("codigo, estado");
   if (errorExistentes) throw new Error(errorExistentes.message);
-  const conocidos = new Set((existentes ?? []).map((p) => p.codigo));
+  const previos = new Map((existentes ?? []).map((p) => [p.codigo, p.estado]));
 
   const { error } = await supabaseAdmin.from("personal").upsert(
     [...unicos.values()].map((p) => ({
