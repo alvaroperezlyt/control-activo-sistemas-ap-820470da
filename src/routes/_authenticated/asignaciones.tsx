@@ -2,7 +2,9 @@ import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Pencil, Plus } from "lucide-react";
+import { Pencil, Plus, RefreshCw } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { sincronizarActivos } from "@/lib/sync.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { TIPOS, formatearFecha, type TipoEquipo } from "@/lib/tipos";
 import { PageHeader, EstadoBadge } from "@/components/PageHeader";
@@ -37,6 +39,12 @@ export const Route = createFileRoute("/_authenticated/asignaciones")({
 
 function Asignaciones() {
   const queryClient = useQueryClient();
+  const syncActivos = useServerFn(sincronizarActivos);
+  const manual = useMutation({
+    mutationFn: () => syncActivos(),
+    onSuccess: (r) => toast.success(`Sheets actualizado · ${r.equipos} equipos · ${r.lineas} líneas`),
+    onError: (e: Error) => toast.error(e.message),
+  });
   const [abierto, setAbierto] = useState(false);
   const [persona, setPersona] = useState<PersonaRow | null>(null);
   const [equipoId, setEquipoId] = useState("");
@@ -118,6 +126,7 @@ function Asignaciones() {
     onSuccess: () => {
       queryClient.invalidateQueries();
       toast.success("Equipo asignado");
+      syncActivos().catch((e: Error) => toast.error(`Sheets de activos: ${e.message}`));
       setAbierto(false);
       setPersona(null);
       setEquipoId("");
@@ -155,6 +164,10 @@ function Asignaciones() {
   return (
     <div className="mx-auto max-w-5xl">
       <PageHeader titulo="Asignaciones" descripcion="Entrega de equipos al personal activo.">
+        <Button variant="outline" onClick={() => manual.mutate()} disabled={manual.isPending}>
+          <RefreshCw className={manual.isPending ? "size-4 animate-spin" : "size-4"} />
+          Sincronizar Sheets
+        </Button>
         <Button onClick={() => setAbierto(true)}>
           <Plus className="size-4" />
           Asignar equipo

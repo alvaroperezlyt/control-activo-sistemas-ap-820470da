@@ -11,3 +11,12 @@ export const sincronizarPersonal = createServerFn({ method: "POST" })
     const { sincronizarPersonalEnBase } = await import("./personal-sync.server");
     return await sincronizarPersonalEnBase();
   });
+
+/** Publica equipos y líneas (asignados y libres) en el Google Sheets de activos. */
+export const sincronizarActivos = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    if (!context.userId) throw new Error("Sesión no válida.");
+    const { sincronizarActivosEnSheets } = await import("./activos-sync.server");
+    return await sincronizarActivosEnSheets();
+  });
