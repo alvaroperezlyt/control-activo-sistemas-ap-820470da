@@ -64,7 +64,12 @@ export async function sincronizarActivosEnSheets() {
     const p = asignado && e.personal_codigo ? personas.get(e.personal_codigo) : undefined;
     const datos = (e.datos ?? {}) as Record<string, unknown>;
     if (e.tipo === "LINEA") {
-      filasLineas.push([e.codigo_interno, String(datos["corto"] ?? ""), p?.nombre ?? ""]);
+      filasLineas.push([
+        e.codigo_interno,
+        String(datos["corto"] ?? ""),
+        p?.nombre ?? "",
+        asignado ? (e.personal_codigo ?? "") : "",
+      ]);
       continue;
     }
     const n = conteo.get(e.id) ?? 0;
@@ -83,12 +88,12 @@ export async function sincronizarActivosEnSheets() {
     ]);
   }
 
-  await llamar("POST", "/values:batchClear", { ranges: ["equipos!A2:J", "lineas!A2:C"] });
+  await llamar("POST", "/values:batchClear", { ranges: ["equipos!A2:J", "lineas!A2:D"] });
   await llamar("POST", "/values:batchUpdate", {
     valueInputOption: "RAW",
     data: [
       { range: `equipos!A2:J${filasEquipos.length + 1}`, values: filasEquipos },
-      { range: `lineas!A2:C${filasLineas.length + 1}`, values: filasLineas },
+      { range: `lineas!A2:D${filasLineas.length + 1}`, values: filasLineas },
     ].filter((d) => d.values.length > 0),
   });
 
