@@ -16,7 +16,7 @@ async function llamar(method: string, path: string, body?: unknown) {
       "X-Connection-Api-Key": sheetsKey,
       "Content-Type": "application/json",
     },
-    body: body ? JSON.stringify(body) : undefined,
+    body: body ? JSON.stringify(body) : null,
   });
   if (!res.ok) {
     const t = await res.text();
