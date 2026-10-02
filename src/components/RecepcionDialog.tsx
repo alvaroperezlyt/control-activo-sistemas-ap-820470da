@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { sincronizarActivos } from "@/lib/sync.functions";
 import { FORMULARIOS, formularioParaEquipo, type FormularioId } from "@/lib/checklists";
 import { PersonalSelect, type PersonaRow } from "@/components/PersonalSelect";
 import { Button } from "@/components/ui/button";
@@ -86,6 +88,7 @@ export function RecepcionDialog({
     : null;
   const formulario = formularioId ? FORMULARIOS[formularioId] : null;
 
+  const syncActivos = useServerFn(sincronizarActivos);
   const registrar = useMutation({
     mutationFn: async () => {
       if (!revisor.trim()) throw new Error("Indica el nombre del revisor.");
@@ -152,6 +155,7 @@ export function RecepcionDialog({
       queryClient.invalidateQueries();
       toast.success("Recepción registrada");
       onOpenChange(false);
+      syncActivos().catch((e: Error) => toast.error(`Sheets de activos: ${e.message}`));
     },
     onError: (e: Error) => toast.error(e.message),
   });
