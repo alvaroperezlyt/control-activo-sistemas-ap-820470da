@@ -35,7 +35,7 @@ function descripcion(tipo: string, datos: Record<string, unknown>): string {
     })
     .filter(Boolean);
   const etiqueta = def?.labelSingular ?? tipo;
-  return [etiqueta, ...partes].join(" | ");
+  return [etiqueta, ...partes].join("\n");
 }
 
 export async function sincronizarActivosEnSheets() {
