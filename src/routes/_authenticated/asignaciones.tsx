@@ -2,7 +2,8 @@ import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Pencil, Plus, RefreshCw } from "lucide-react";
+import { Copy, Pencil, Plus, RefreshCw } from "lucide-react";
+import { copiarTexto, textoAsignacion } from "@/lib/texto-rrhh";
 import { useServerFn } from "@tanstack/react-start";
 import { sincronizarActivos } from "@/lib/sync.functions";
 import { supabase } from "@/integrations/supabase/client";
@@ -72,7 +73,7 @@ function Asignaciones() {
       let q = supabase
         .from("asignaciones")
         .select(
-          "id, fecha_entrega, fecha_retorno, personal_codigo, personal_nombre, observaciones, equipos(id, codigo_interno, tipo)",
+          "id, fecha_entrega, fecha_retorno, personal_codigo, personal_nombre, observaciones, equipos(id, codigo_interno, tipo, marca, modelo, serie, color, datos)",
         )
         .order("fecha_entrega", { ascending: false });
       if (filtroPersona) q = q.eq("personal_codigo", filtroPersona);
@@ -123,10 +124,22 @@ function Asignaciones() {
         .eq("id", equipoId);
       if (errEquipo) throw errEquipo;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries();
-      toast.success("Equipo asignado");
       syncActivos().catch((e: Error) => toast.error(`Sheets de activos: ${e.message}`));
+      if (persona) {
+        const { data } = await supabase
+          .from("equipos")
+          .select("codigo_interno, tipo, marca, modelo, serie, color, datos")
+          .eq("personal_codigo", persona.codigo)
+          .eq("estado_asignacion", "ASIGNADO");
+        try {
+          await copiarTexto(textoAsignacion(persona.nombre, persona.codigo, data ?? [], fecha));
+          toast.success("Equipo asignado · texto RRHH copiado");
+        } catch {
+          toast.success("Equipo asignado");
+        }
+      }
       setAbierto(false);
       setPersona(null);
       setEquipoId("");
@@ -198,6 +211,16 @@ function Asignaciones() {
       <div className="grid gap-4 md:grid-cols-2">
         {grupos.map((g) => {
           const vigentes = g.items.filter((i) => !i.fecha_retorno).length;
+          const copiar = async () => {
+            const eqs = g.items.filter((i) => !i.fecha_retorno && i.equipos).map((i) => i.equipos!);
+            if (eqs.length === 0) return toast.error("Sin equipos vigentes para esta persona.");
+            try {
+              await copiarTexto(textoAsignacion(g.nombre, g.codigo, eqs, g.ultima));
+              toast.success("Texto RRHH copiado");
+            } catch {
+              toast.error("No se pudo copiar al portapapeles");
+            }
+          };
           return (
             <div key={g.codigo ?? g.nombre} className="panel p-4">
               <div className="mb-3 flex items-start justify-between gap-2 border-b border-border pb-2">
@@ -208,9 +231,15 @@ function Asignaciones() {
                     {vigentes} vigente(s) de {g.items.length}
                   </p>
                 </div>
-                <span className="text-xs text-muted-foreground">
-                  Última: {formatearFecha(g.ultima)}
-                </span>
+                <div className="flex flex-col items-end gap-1">
+                  <span className="text-xs text-muted-foreground">
+                    Última: {formatearFecha(g.ultima)}
+                  </span>
+                  <Button variant="outline" size="sm" onClick={copiar}>
+                    <Copy className="size-4" />
+                    Copiar texto RRHH
+                  </Button>
+                </div>
               </div>
               <ul className="space-y-2">
                 {g.items.map((a) => (
