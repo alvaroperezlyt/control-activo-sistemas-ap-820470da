@@ -213,7 +213,7 @@ function Asignaciones() {
           const vigentes = g.items.filter((i) => !i.fecha_retorno).length;
           const copiar = async () => {
             const eqs = g.items.filter((i) => !i.fecha_retorno && i.equipos).map((i) => i.equipos!);
-            if (eqs.length === 0) return toast.error("Sin equipos vigentes para esta persona.");
+            if (eqs.length === 0) { toast.error("Sin equipos vigentes para esta persona."); return; }
             try {
               await copiarTexto(textoAsignacion(g.nombre, g.codigo, eqs, g.ultima));
               toast.success("Texto RRHH copiado");

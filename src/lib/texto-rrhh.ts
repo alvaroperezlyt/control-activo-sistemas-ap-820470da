@@ -72,8 +72,8 @@ function ordenar(r: Record<string, string>) {
 }
 
 export function textoRecepcion(recs: RecepcionTexto[], etiquetas: Record<string, string>) {
-  if (recs.length === 0) return "";
   const p = recs[0];
+  if (!p) return "";
   const out = [
     "CONSTANCIA DE RECEPCIÓN DE ACTIVOS DE TI",
     `Colaborador: ${p.personal_nombre ?? "—"}${p.personal_codigo ? ` (CI ${p.personal_codigo})` : ""}`,
