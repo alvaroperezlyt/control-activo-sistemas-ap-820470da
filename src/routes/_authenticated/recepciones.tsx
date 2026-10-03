@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
+import { Copy, Plus } from "lucide-react";
+import { toast } from "sonner";
+import { copiarTexto, textoRecepcion } from "@/lib/texto-rrhh";
 import { supabase } from "@/integrations/supabase/client";
 import { formatearFecha } from "@/lib/tipos";
 import { PageHeader } from "@/components/PageHeader";
@@ -148,18 +150,32 @@ function Recepciones() {
       </div>
 
       <RecepcionDialog abierto={abierto} onOpenChange={setAbierto} />
-      <DetalleDialog recepcion={detalle} onClose={() => setDetalle(null)} />
+      <DetalleDialog recepcion={detalle} todas={recepciones} onClose={() => setDetalle(null)} />
     </div>
   );
 }
 
 function DetalleDialog({
   recepcion,
+  todas,
   onClose,
 }: {
   recepcion: RecepcionRow | null;
+  todas: RecepcionRow[];
   onClose: () => void;
 }) {
+  const clave = recepcion?.personal_codigo ?? recepcion?.personal_nombre;
+  const delMismo = recepcion
+    ? todas.filter((r) => (r.personal_codigo ?? r.personal_nombre) === clave)
+    : [];
+  const copiar = async (lista: RecepcionRow[]) => {
+    try {
+      await copiarTexto(textoRecepcion(lista, ETIQUETAS));
+      toast.success("Respuesta RRHH copiada");
+    } catch {
+      toast.error("No se pudo copiar al portapapeles");
+    }
+  };
   const fotos = (Array.isArray(recepcion?.fotos) ? recepcion?.fotos : []) as {
     key: string;
     label: string;
@@ -194,6 +210,18 @@ function DetalleDialog({
             {formatearFecha(recepcion?.fecha)} · Revisor: {recepcion?.revisor ?? "—"}
           </DialogDescription>
         </DialogHeader>
+        <div className="flex flex-wrap gap-2">
+          <Button size="sm" variant="outline" onClick={() => recepcion && copiar([recepcion])}>
+            <Copy className="size-4" />
+            Copiar respuesta RRHH
+          </Button>
+          {delMismo.length > 1 && (
+            <Button size="sm" variant="outline" onClick={() => copiar(delMismo)}>
+              <Copy className="size-4" />
+              Copiar todas de este colaborador ({delMismo.length})
+            </Button>
+          )}
+        </div>
 
         <dl className="space-y-3 text-sm">
           {ordenarRespuestas(respuestas).map(([pregunta, valor]) => (
