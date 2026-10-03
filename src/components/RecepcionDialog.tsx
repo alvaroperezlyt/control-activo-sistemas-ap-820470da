@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
 import { sincronizarActivos } from "@/lib/sync.functions";
 import { FORMULARIOS, formularioParaEquipo, type FormularioId } from "@/lib/checklists";
+import { copiarTexto, textoRecepcion } from "@/lib/texto-rrhh";
 import { PersonalSelect, type PersonaRow } from "@/components/PersonalSelect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -150,10 +151,31 @@ export function RecepcionDialog({
         .update({ estado_asignacion: "LIBRE", personal_codigo: null })
         .eq("id", seleccionada.equipo_id);
       if (errEquipo) throw errEquipo;
+      return textoRecepcion(
+        [
+          {
+            fecha,
+            formulario: formulario.id,
+            tipo: seleccionada.equipos?.tipo ?? "OTRO",
+            revisor: revisor.trim(),
+            personal_nombre: persona.nombre,
+            personal_codigo: persona.codigo,
+            observaciones: observaciones.trim() || null,
+            respuestas: detalle,
+            codigo_interno: seleccionada.equipos?.codigo_interno ?? null,
+          },
+        ],
+        { CELULAR: "Celular", LINEA: "Línea corporativa", LAPTOP: "Laptop", ESCRITORIO: "Escritorio", GENERICO: "Equipo" },
+      );
     },
-    onSuccess: () => {
+    onSuccess: async (texto) => {
       queryClient.invalidateQueries();
-      toast.success("Recepción registrada");
+      try {
+        await copiarTexto(texto);
+        toast.success("Recepción registrada · respuesta RRHH copiada");
+      } catch {
+        toast.success("Recepción registrada");
+      }
       onOpenChange(false);
       syncActivos().catch((e: Error) => toast.error(`Sheets de activos: ${e.message}`));
     },
