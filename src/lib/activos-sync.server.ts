@@ -88,14 +88,18 @@ export async function sincronizarActivosEnSheets() {
     ]);
   }
 
-  await llamar("POST", "/values:batchClear", { ranges: ["equipos!A2:J", "lineas!A2:D"] });
-  await llamar("POST", "/values:batchUpdate", {
-    valueInputOption: "RAW",
-    data: [
-      { range: `equipos!A2:J${filasEquipos.length + 1}`, values: filasEquipos },
-      { range: `lineas!A2:D${filasLineas.length + 1}`, values: filasLineas },
-    ].filter((d) => d.values.length > 0),
-  });
+  return await escribirActivosEnSheets(filasEquipos, filasLineas);
+}
 
+/** Reemplaza el contenido de las hojas "equipos" y "lineas" con las filas recibidas. */
+export async function escribirActivosEnSheets(filasEquipos: string[][], filasLineas: string[][]) {
+  await llamar("POST", "/values:batchClear", { ranges: ["equipos!A2:J", "lineas!A2:D"] });
+  const data = [
+    { range: `equipos!A2:J${filasEquipos.length + 1}`, values: filasEquipos },
+    { range: `lineas!A2:D${filasLineas.length + 1}`, values: filasLineas },
+  ].filter((d) => d.values.length > 0);
+  if (data.length > 0) {
+    await llamar("POST", "/values:batchUpdate", { valueInputOption: "RAW", data });
+  }
   return { equipos: filasEquipos.length, lineas: filasLineas.length };
 }
