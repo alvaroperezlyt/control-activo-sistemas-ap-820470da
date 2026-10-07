@@ -27,6 +27,8 @@ import { Route as AuthenticatedEquiposIdRouteImport } from './routes/_authentica
 import { Route as AuthenticatedInformesIndexRouteImport } from './routes/_authenticated/informes.index'
 import { Route as AuthenticatedInformesAntiguedadRouteImport } from './routes/_authenticated/informes.antiguedad'
 import { Route as AuthenticatedInformesSucursalRouteImport } from './routes/_authenticated/informes.sucursal'
+import { Route as ApiPublicBridgeActivosRouteImport } from './routes/api/public/bridge/activos'
+import { Route as ApiPublicBridgePersonalRouteImport } from './routes/api/public/bridge/personal'
 import { Route as ApiPublicHooksSyncPersonalRouteImport } from './routes/api/public/hooks/sync-personal'
 
 const IndexRoute = IndexRouteImport.update({
@@ -125,6 +127,16 @@ const AuthenticatedInformesSucursalRoute =
     path: '/informes/sucursal',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicBridgeActivosRoute = ApiPublicBridgeActivosRouteImport.update({
+  id: '/api/public/bridge/activos',
+  path: '/api/public/bridge/activos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicBridgePersonalRoute = ApiPublicBridgePersonalRouteImport.update({
+  id: '/api/public/bridge/personal',
+  path: '/api/public/bridge/personal',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicHooksSyncPersonalRoute =
   ApiPublicHooksSyncPersonalRouteImport.update({
     id: '/api/public/hooks/sync-personal',
@@ -150,6 +162,8 @@ export interface FileRoutesByFullPath {
   '/informes/sucursal': typeof AuthenticatedInformesSucursalRoute
   '/equipos/': typeof AuthenticatedEquiposIndexRoute
   '/informes/': typeof AuthenticatedInformesIndexRoute
+  '/api/public/bridge/activos': typeof ApiPublicBridgeActivosRoute
+  '/api/public/bridge/personal': typeof ApiPublicBridgePersonalRoute
   '/api/public/hooks/sync-personal': typeof ApiPublicHooksSyncPersonalRoute
 }
 export interface FileRoutesByTo {
@@ -170,6 +184,8 @@ export interface FileRoutesByTo {
   '/informes/sucursal': typeof AuthenticatedInformesSucursalRoute
   '/equipos': typeof AuthenticatedEquiposIndexRoute
   '/informes': typeof AuthenticatedInformesIndexRoute
+  '/api/public/bridge/activos': typeof ApiPublicBridgeActivosRoute
+  '/api/public/bridge/personal': typeof ApiPublicBridgePersonalRoute
   '/api/public/hooks/sync-personal': typeof ApiPublicHooksSyncPersonalRoute
 }
 export interface FileRoutesById {
@@ -192,6 +208,8 @@ export interface FileRoutesById {
   '/_authenticated/informes/sucursal': typeof AuthenticatedInformesSucursalRoute
   '/_authenticated/equipos/': typeof AuthenticatedEquiposIndexRoute
   '/_authenticated/informes/': typeof AuthenticatedInformesIndexRoute
+  '/api/public/bridge/activos': typeof ApiPublicBridgeActivosRoute
+  '/api/public/bridge/personal': typeof ApiPublicBridgePersonalRoute
   '/api/public/hooks/sync-personal': typeof ApiPublicHooksSyncPersonalRoute
 }
 export interface FileRouteTypes {
@@ -214,6 +232,8 @@ export interface FileRouteTypes {
     | '/informes/sucursal'
     | '/equipos/'
     | '/informes/'
+    | '/api/public/bridge/activos'
+    | '/api/public/bridge/personal'
     | '/api/public/hooks/sync-personal'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -234,6 +254,8 @@ export interface FileRouteTypes {
     | '/informes/sucursal'
     | '/equipos'
     | '/informes'
+    | '/api/public/bridge/activos'
+    | '/api/public/bridge/personal'
     | '/api/public/hooks/sync-personal'
   id:
     | '__root__'
@@ -255,6 +277,8 @@ export interface FileRouteTypes {
     | '/_authenticated/informes/sucursal'
     | '/_authenticated/equipos/'
     | '/_authenticated/informes/'
+    | '/api/public/bridge/activos'
+    | '/api/public/bridge/personal'
     | '/api/public/hooks/sync-personal'
   fileRoutesById: FileRoutesById
 }
@@ -262,6 +286,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiPublicBridgeActivosRoute: typeof ApiPublicBridgeActivosRoute
+  ApiPublicBridgePersonalRoute: typeof ApiPublicBridgePersonalRoute
   ApiPublicHooksSyncPersonalRoute: typeof ApiPublicHooksSyncPersonalRoute
 }
 
@@ -393,6 +419,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInformesSucursalRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/bridge/activos': {
+      id: '/api/public/bridge/activos'
+      path: '/api/public/bridge/activos'
+      fullPath: '/api/public/bridge/activos'
+      preLoaderRoute: typeof ApiPublicBridgeActivosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/bridge/personal': {
+      id: '/api/public/bridge/personal'
+      path: '/api/public/bridge/personal'
+      fullPath: '/api/public/bridge/personal'
+      preLoaderRoute: typeof ApiPublicBridgePersonalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/sync-personal': {
       id: '/api/public/hooks/sync-personal'
       path: '/api/public/hooks/sync-personal'
@@ -446,6 +486,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiPublicBridgeActivosRoute: ApiPublicBridgeActivosRoute,
+  ApiPublicBridgePersonalRoute: ApiPublicBridgePersonalRoute,
   ApiPublicHooksSyncPersonalRoute: ApiPublicHooksSyncPersonalRoute,
 }
 export const routeTree = rootRouteImport
