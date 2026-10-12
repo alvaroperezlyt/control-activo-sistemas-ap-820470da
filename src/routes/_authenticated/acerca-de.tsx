@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useEsAdmin } from "@/hooks/useEsAdmin";
+import { IdHojaCampo } from "@/components/IdHojaCampo";
 
 export const VERSION_SISTEMA = "1.0.0";
 
@@ -87,6 +88,27 @@ function AcercaDe() {
             <dd className="mt-1 text-sm font-medium">{new Date().getFullYear()}</dd>
           </div>
         </dl>
+      </div>
+
+      <div className="panel mt-4 space-y-4 p-5">
+        <div>
+          <h2 className="font-semibold">Hojas de Google Sheets</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Campos protegidos. Solo el administrador puede desbloquearlos para editar.
+          </p>
+        </div>
+        <IdHojaCampo
+          clave="sheets_personal_id"
+          titulo="ID hoja RRHH / Personal"
+          defecto="1Kr3eVp3vtn0UnMAiJiOLGYokOeC_L9bIdPmhbArVtro"
+          esAdmin={esAdmin}
+        />
+        <IdHojaCampo
+          clave="sheets_activos_id"
+          titulo="ID hoja de equipos y líneas"
+          defecto="13tXXCc9clnw3vbKbzcy0sRwdSoJ19AawGyOp-3F8Mh8"
+          esAdmin={esAdmin}
+        />
       </div>
 
       <div className="panel mt-4 p-5">
