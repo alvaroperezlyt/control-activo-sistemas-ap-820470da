@@ -4,6 +4,18 @@ const GATEWAY = "https://connector-gateway.lovable.dev/google_sheets/v4";
 
 export const SPREADSHEET_ID = "1Kr3eVp3vtn0UnMAiJiOLGYokOeC_L9bIdPmhbArVtro";
 
+/** Lee un ID de hoja configurado en ajustes; usa el valor por defecto si no existe. */
+export async function idHoja(clave: string, defecto: string): Promise<string> {
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data } = await supabaseAdmin.from("ajustes").select("valor").eq("clave", clave).maybeSingle();
+    const v = (data?.valor ?? "").trim();
+    return v || defecto;
+  } catch {
+    return defecto;
+  }
+}
+
 async function leerRango(rango: string): Promise<string[][]> {
   const lovableKey = process.env["LOVABLE_API_KEY"];
   const sheetsKey = process.env["GOOGLE_SHEETS_API_KEY"];
@@ -11,7 +23,8 @@ async function leerRango(rango: string): Promise<string[][]> {
     throw new Error("La conexión con Google Sheets no está configurada.");
   }
 
-  const url = `${GATEWAY}/spreadsheets/${SPREADSHEET_ID}/values/${rango}?valueRenderOption=FORMATTED_VALUE`;
+  const id = await idHoja("sheets_personal_id", SPREADSHEET_ID);
+  const url = `${GATEWAY}/spreadsheets/${id}/values/${rango}?valueRenderOption=FORMATTED_VALUE`;
   const res = await fetch(url, {
     headers: {
       Authorization: `Bearer ${lovableKey}`,
