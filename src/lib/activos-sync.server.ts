@@ -1,9 +1,10 @@
 /** Publica en el Google Sheets de activos el estado actual de equipos y líneas (excepto BAJA). */
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { ACTIVOS_SHEET_ID, idHoja } from "./sheets.server";
 import { TIPOS, type TipoEquipo } from "./tipos";
 
 const GATEWAY = "https://connector-gateway.lovable.dev/google_sheets/v4";
-export const ACTIVOS_SHEET_ID = "13tXXCc9clnw3vbKbzcy0sRwdSoJ19AawGyOp-3F8Mh8";
+export { ACTIVOS_SHEET_ID };
 
 async function llamar(method: string, path: string, body?: unknown) {
   const lovableKey = process.env["LOVABLE_API_KEY"];
