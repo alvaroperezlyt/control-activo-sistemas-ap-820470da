@@ -1,15 +1,15 @@
 /** Publica en el Google Sheets de activos el estado actual de equipos y líneas (excepto BAJA). */
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { ACTIVOS_SHEET_ID, idHoja } from "./sheets.server";
 import { TIPOS, type TipoEquipo } from "./tipos";
 
 const GATEWAY = "https://connector-gateway.lovable.dev/google_sheets/v4";
-export const ACTIVOS_SHEET_ID = "13tXXCc9clnw3vbKbzcy0sRwdSoJ19AawGyOp-3F8Mh8";
+export { ACTIVOS_SHEET_ID };
 
 async function llamar(method: string, path: string, body?: unknown) {
   const lovableKey = process.env["LOVABLE_API_KEY"];
   const sheetsKey = process.env["GOOGLE_SHEETS_API_KEY"];
   if (!lovableKey || !sheetsKey) throw new Error("La conexión con Google Sheets no está configurada.");
-  const { idHoja } = await import("./sheets.server");
   const id = await idHoja("sheets_activos_id", ACTIVOS_SHEET_ID);
   const res = await fetch(`${GATEWAY}/spreadsheets/${id}${path}`, {
     method,

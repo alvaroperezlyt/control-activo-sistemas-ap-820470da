@@ -4,6 +4,24 @@ const GATEWAY = "https://connector-gateway.lovable.dev/google_sheets/v4";
 
 export const SPREADSHEET_ID = "1Kr3eVp3vtn0UnMAiJiOLGYokOeC_L9bIdPmhbArVtro";
 
+/** Libro de activos (equipos y líneas), donde el sistema escribe. */
+export const ACTIVOS_SHEET_ID = "13tXXCc9clnw3vbKbzcy0sRwdSoJ19AawGyOp-3F8Mh8";
+
+/** Libros gestionados: "personal" (solo lectura) y "activos" (equipos y líneas). */
+export const LIBROS = {
+  personal: { clave: "sheets_personal_id", defecto: SPREADSHEET_ID },
+  activos: { clave: "sheets_activos_id", defecto: ACTIVOS_SHEET_ID },
+} as const;
+
+export type Libro = keyof typeof LIBROS;
+
+/** Resuelve la clave de ajuste y el ID por defecto de un libro pedido. */
+export function configLibro(libro: string | undefined | null): { clave: string; defecto: string; libro: Libro } {
+  const pedido = (libro ?? "").trim().toLowerCase();
+  const elegido: Libro = pedido === "activos" || pedido === "equipos" ? "activos" : "personal";
+  return { ...LIBROS[elegido], libro: elegido };
+}
+
 /** Lee un ID de hoja configurado en ajustes; usa el valor por defecto si no existe. */
 export async function idHoja(clave: string, defecto: string): Promise<string> {
   try {
@@ -80,9 +98,10 @@ async function gatewayGet(path: string): Promise<unknown> {
   return res.json();
 }
 
-/** Lista las hojas (pestañas) del libro de RRHH configurado. */
-export async function listarHojasPersonal() {
-  const id = await idHoja("sheets_personal_id", SPREADSHEET_ID);
+/** Lista las hojas (pestañas) de un libro gestionado: "personal" (por defecto) o "activos". */
+export async function listarHojasPersonal(libro = "personal") {
+  const cfg = configLibro(libro);
+  const id = await idHoja(cfg.clave, cfg.defecto);
   const json = (await gatewayGet(
     `/spreadsheets/${id}?fields=properties.title,sheets.properties(sheetId,title,index,gridProperties)`,
   )) as {
@@ -101,9 +120,10 @@ export async function listarHojasPersonal() {
   };
 }
 
-/** Lee un rango arbitrario (A1) del libro de RRHH configurado. */
-export async function leerRangoPersonal(rango: string): Promise<string[][]> {
-  const id = await idHoja("sheets_personal_id", SPREADSHEET_ID);
+/** Lee un rango arbitrario (A1) de un libro gestionado: "personal" (por defecto) o "activos". */
+export async function leerRangoPersonal(rango: string, libro = "personal"): Promise<string[][]> {
+  const cfg = configLibro(libro);
+  const id = await idHoja(cfg.clave, cfg.defecto);
   const json = (await gatewayGet(
     `/spreadsheets/${id}/values/${encodeURI(rango).replace(/%3A/gi, ":")}?valueRenderOption=FORMATTED_VALUE`,
   )) as { values?: string[][] };
