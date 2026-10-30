@@ -23,7 +23,12 @@ export const Route = createFileRoute("/api/public/bridge/hojas")({
         try {
           const { listarHojasPersonal, configLibro } = await import("@/lib/sheets.server");
           const res = await listarHojasPersonal(parsed.libro);
-          return Response.json({ success: true, libro: configLibro(parsed.libro).libro, ...res, titulo: res.libro });
+          return Response.json({
+            success: true,
+            libro: configLibro(parsed.libro).libro,
+            titulo: res.libro,
+            hojas: res.hojas,
+          });
         } catch (e) {
           const error = e instanceof Error ? e.message : "Error desconocido";
           return Response.json({ success: false, error }, { status: 502 });
