@@ -4,6 +4,21 @@ const GATEWAY = "https://connector-gateway.lovable.dev/google_sheets/v4";
 
 export const SPREADSHEET_ID = "1Kr3eVp3vtn0UnMAiJiOLGYokOeC_L9bIdPmhbArVtro";
 
+/** Libros gestionados: "personal" (solo lectura) y "activos" (equipos y líneas). */
+export const LIBROS = {
+  personal: { clave: "sheets_personal_id", defecto: SPREADSHEET_ID },
+  activos: { clave: "sheets_activos_id", defecto: ACTIVOS_SHEET_ID },
+} as const;
+
+export type Libro = keyof typeof LIBROS;
+
+/** Resuelve la clave de ajuste y el ID por defecto de un libro pedido. */
+export function configLibro(libro: string | undefined | null): { clave: string; defecto: string; libro: Libro } {
+  const pedido = (libro ?? "").trim().toLowerCase();
+  const elegido: Libro = pedido === "activos" || pedido === "equipos" ? "activos" : "personal";
+  return { ...LIBROS[elegido], libro: elegido };
+}
+
 /** Lee un ID de hoja configurado en ajustes; usa el valor por defecto si no existe. */
 export async function idHoja(clave: string, defecto: string): Promise<string> {
   try {
