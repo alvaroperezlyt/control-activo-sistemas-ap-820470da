@@ -4,6 +4,9 @@ const GATEWAY = "https://connector-gateway.lovable.dev/google_sheets/v4";
 
 export const SPREADSHEET_ID = "1Kr3eVp3vtn0UnMAiJiOLGYokOeC_L9bIdPmhbArVtro";
 
+/** Libro de activos (equipos y líneas), donde el sistema escribe. */
+export const ACTIVOS_SHEET_ID = "13tXXCc9clnw3vbKbzcy0sRwdSoJ19AawGyOp-3F8Mh8";
+
 /** Libros gestionados: "personal" (solo lectura) y "activos" (equipos y líneas). */
 export const LIBROS = {
   personal: { clave: "sheets_personal_id", defecto: SPREADSHEET_ID },
