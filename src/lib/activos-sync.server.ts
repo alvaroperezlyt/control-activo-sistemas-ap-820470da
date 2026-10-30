@@ -10,7 +10,6 @@ async function llamar(method: string, path: string, body?: unknown) {
   const lovableKey = process.env["LOVABLE_API_KEY"];
   const sheetsKey = process.env["GOOGLE_SHEETS_API_KEY"];
   if (!lovableKey || !sheetsKey) throw new Error("La conexión con Google Sheets no está configurada.");
-  const { idHoja } = await import("./sheets.server");
   const id = await idHoja("sheets_activos_id", ACTIVOS_SHEET_ID);
   const res = await fetch(`${GATEWAY}/spreadsheets/${id}${path}`, {
     method,

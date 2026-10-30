@@ -98,9 +98,10 @@ async function gatewayGet(path: string): Promise<unknown> {
   return res.json();
 }
 
-/** Lista las hojas (pestañas) del libro de RRHH configurado. */
-export async function listarHojasPersonal() {
-  const id = await idHoja("sheets_personal_id", SPREADSHEET_ID);
+/** Lista las hojas (pestañas) de un libro gestionado: "personal" (por defecto) o "activos". */
+export async function listarHojasPersonal(libro = "personal") {
+  const cfg = configLibro(libro);
+  const id = await idHoja(cfg.clave, cfg.defecto);
   const json = (await gatewayGet(
     `/spreadsheets/${id}?fields=properties.title,sheets.properties(sheetId,title,index,gridProperties)`,
   )) as {
@@ -119,9 +120,10 @@ export async function listarHojasPersonal() {
   };
 }
 
-/** Lee un rango arbitrario (A1) del libro de RRHH configurado. */
-export async function leerRangoPersonal(rango: string): Promise<string[][]> {
-  const id = await idHoja("sheets_personal_id", SPREADSHEET_ID);
+/** Lee un rango arbitrario (A1) de un libro gestionado: "personal" (por defecto) o "activos". */
+export async function leerRangoPersonal(rango: string, libro = "personal"): Promise<string[][]> {
+  const cfg = configLibro(libro);
+  const id = await idHoja(cfg.clave, cfg.defecto);
   const json = (await gatewayGet(
     `/spreadsheets/${id}/values/${encodeURI(rango).replace(/%3A/gi, ":")}?valueRenderOption=FORMATTED_VALUE`,
   )) as { values?: string[][] };
