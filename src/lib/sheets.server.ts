@@ -65,3 +65,47 @@ export async function leerPersonal(): Promise<PersonalSheet[]> {
   }
   return salida;
 }
+
+async function gatewayGet(path: string): Promise<unknown> {
+  const lovableKey = process.env["LOVABLE_API_KEY"];
+  const sheetsKey = process.env["GOOGLE_SHEETS_API_KEY"];
+  if (!lovableKey || !sheetsKey) throw new Error("La conexión con Google Sheets no está configurada.");
+  const res = await fetch(`${GATEWAY}${path}`, {
+    headers: { Authorization: `Bearer ${lovableKey}`, "X-Connection-Api-Key": sheetsKey },
+  });
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Google Sheets [${res.status}]: ${body}`);
+  }
+  return res.json();
+}
+
+/** Lista las hojas (pestañas) del libro de RRHH configurado. */
+export async function listarHojasPersonal() {
+  const id = await idHoja("sheets_personal_id", SPREADSHEET_ID);
+  const json = (await gatewayGet(
+    `/spreadsheets/${id}?fields=properties.title,sheets.properties(sheetId,title,index,gridProperties)`,
+  )) as {
+    properties?: { title?: string };
+    sheets?: { properties: { sheetId: number; title: string; index: number; gridProperties?: { rowCount?: number; columnCount?: number } } }[];
+  };
+  return {
+    libro: json.properties?.title ?? "",
+    hojas: (json.sheets ?? []).map((s) => ({
+      id: s.properties.sheetId,
+      nombre: s.properties.title,
+      indice: s.properties.index,
+      filas: s.properties.gridProperties?.rowCount ?? null,
+      columnas: s.properties.gridProperties?.columnCount ?? null,
+    })),
+  };
+}
+
+/** Lee un rango arbitrario (A1) del libro de RRHH configurado. */
+export async function leerRangoPersonal(rango: string): Promise<string[][]> {
+  const id = await idHoja("sheets_personal_id", SPREADSHEET_ID);
+  const json = (await gatewayGet(
+    `/spreadsheets/${id}/values/${encodeURI(rango).replace(/%3A/gi, ":")}?valueRenderOption=FORMATTED_VALUE`,
+  )) as { values?: string[][] };
+  return json.values ?? [];
+}
