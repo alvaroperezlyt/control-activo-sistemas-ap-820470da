@@ -14,7 +14,7 @@ export const Route = createFileRoute("/api/public/bridge/hojas")({
         const { verificarPuente } = await import("@/lib/bridge-auth.server");
         const denegado = verificarPuente(request);
         if (denegado) return denegado;
-        let parsed: { libro?: string };
+        let parsed: z.infer<typeof Body>;
         try {
           parsed = Body.parse(await request.json());
         } catch {
@@ -23,7 +23,7 @@ export const Route = createFileRoute("/api/public/bridge/hojas")({
         try {
           const { listarHojasPersonal, configLibro } = await import("@/lib/sheets.server");
           const res = await listarHojasPersonal(parsed.libro);
-          return Response.json({ success: true, libro: configLibro(parsed.libro).libro, ...res });
+          return Response.json({ success: true, libro: configLibro(parsed.libro).libro, ...res, titulo: res.libro });
         } catch (e) {
           const error = e instanceof Error ? e.message : "Error desconocido";
           return Response.json({ success: false, error }, { status: 502 });
