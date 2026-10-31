@@ -2,10 +2,12 @@ import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, Plus, Ban, RotateCcw } from "lucide-react";
+import { ArrowLeft, Plus, Ban, RotateCcw, Pencil } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { TIPOS, formatearFecha, type TipoEquipo } from "@/lib/tipos";
 import { EstadoBadge } from "@/components/PageHeader";
+import { EquipoDialog } from "@/components/EquipoDialog";
+import { ObservacionesPrivadas } from "@/components/ObservacionesPrivadas";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -43,6 +45,7 @@ function DetalleEquipo() {
   const [dialogoBaja, setDialogoBaja] = useState(false);
   const [fechaBaja, setFechaBaja] = useState(() => new Date().toISOString().slice(0, 10));
   const [motivoBaja, setMotivoBaja] = useState("");
+  const [editar, setEditar] = useState(false);
 
   const crearFalla = useMutation({
     mutationFn: async () => {
@@ -181,6 +184,10 @@ function DetalleEquipo() {
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <EstadoBadge estado={equipo.estado_asignacion} />
+            <Button variant="outline" size="sm" onClick={() => setEditar(true)}>
+              <Pencil className="size-4" />
+              Editar equipo
+            </Button>
             {equipo.estado_asignacion === "BAJA" ? (
               <Button variant="outline" size="sm" onClick={() => reactivar.mutate()} disabled={reactivar.isPending}>
                 <RotateCcw className="size-4" />
@@ -225,9 +232,13 @@ function DetalleEquipo() {
         </dl>
 
         {equipo.observaciones && (
-          <p className="mt-6 whitespace-pre-line rounded-md bg-muted/50 p-3 text-sm text-muted-foreground">
-            {equipo.observaciones}
-          </p>
+          <div className="mt-6">
+            <ObservacionesPrivadas key={id} resetKey={id}>
+              <p className="whitespace-pre-line break-words rounded-md bg-muted/50 p-3 text-sm text-muted-foreground">
+                {equipo.observaciones}
+              </p>
+            </ObservacionesPrivadas>
+          </div>
         )}
       </div>
 
@@ -287,6 +298,14 @@ function DetalleEquipo() {
           .
         </p>
       </div>
+
+      <EquipoDialog
+        key={id}
+        tipo={equipo.tipo as TipoEquipo}
+        equipo={{ ...equipo, tipo: equipo.tipo as TipoEquipo, datos }}
+        abierto={editar}
+        onOpenChange={setEditar}
+      />
 
       <Dialog open={nuevaFalla} onOpenChange={setNuevaFalla}>
         <DialogContent>

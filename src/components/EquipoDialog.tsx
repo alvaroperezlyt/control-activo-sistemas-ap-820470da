@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { ObservacionesPrivadas } from "@/components/ObservacionesPrivadas";
 import {
   Dialog,
   DialogContent,
@@ -211,13 +212,15 @@ export function EquipoDialog({
           </div>
 
           <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor="observaciones">Observaciones</Label>
-            <Textarea
-              id="observaciones"
-              value={observaciones}
-              onChange={(e) => setObservaciones(e.target.value)}
-              maxLength={1000}
-            />
+             <ObservacionesPrivadas resetKey={abierto}>
+               <Textarea
+                 id="observaciones"
+                 aria-label="Observaciones"
+                 value={observaciones}
+                 onChange={(e) => setObservaciones(e.target.value)}
+                 maxLength={1000}
+               />
+             </ObservacionesPrivadas>
           </div>
         </div>
 
