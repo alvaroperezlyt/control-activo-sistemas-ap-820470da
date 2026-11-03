@@ -362,7 +362,7 @@ export function generarListaVerificacionPDF(
       return [
         String(h * POR_HOJA + i + 1),
         it ? `${it.personal_nombre} (${it.codigo_interno})` : "",
-        it ? fechaCorta(it.fecha) : "",
+        "", // La fecha se llena a mano: puede diferir de la fecha planificada
         "",
       ];
     });
