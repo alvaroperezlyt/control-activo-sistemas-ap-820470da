@@ -625,6 +625,20 @@ function DetallePlan({ id, onClose }: { id: string; onClose: () => void }) {
           <Button variant="outline" onClick={onClose}>
             Cerrar
           </Button>
+          {plan?.tipo === "MANTENIMIENTO" && (
+            <Button
+              variant="outline"
+              onClick={() =>
+                generarListaVerificacionPDF(
+                  plan,
+                  items.slice().sort((a, b) => a.fecha.localeCompare(b.fecha) || a.orden - b.orden),
+                )
+              }
+            >
+              <FileDown className="size-4" />
+              Lista de verificación
+            </Button>
+          )}
           <Button
             disabled={!plan}
             onClick={() =>
