@@ -13,7 +13,7 @@ const Body = z.object({
 });
 
 function nombreHoja(rango: string) {
-  const hoja = rango.split("!")[0];
+  const hoja = rango.split("!")[0] ?? "";
   return hoja.replace(/^'|'$/g, "").trim().toLowerCase();
 }
 
