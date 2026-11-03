@@ -28,6 +28,7 @@ import { Route as AuthenticatedInformesIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedInformesAntiguedadRouteImport } from './routes/_authenticated/informes.antiguedad'
 import { Route as AuthenticatedInformesSucursalRouteImport } from './routes/_authenticated/informes.sucursal'
 import { Route as ApiPublicBridgeActivosRouteImport } from './routes/api/public/bridge/activos'
+import { Route as ApiPublicBridgeEscribirRouteImport } from './routes/api/public/bridge/escribir'
 import { Route as ApiPublicBridgeHojasRouteImport } from './routes/api/public/bridge/hojas'
 import { Route as ApiPublicBridgeLeerRouteImport } from './routes/api/public/bridge/leer'
 import { Route as ApiPublicBridgePersonalRouteImport } from './routes/api/public/bridge/personal'
@@ -134,6 +135,11 @@ const ApiPublicBridgeActivosRoute = ApiPublicBridgeActivosRouteImport.update({
   path: '/api/public/bridge/activos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicBridgeEscribirRoute = ApiPublicBridgeEscribirRouteImport.update({
+  id: '/api/public/bridge/escribir',
+  path: '/api/public/bridge/escribir',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicBridgeHojasRoute = ApiPublicBridgeHojasRouteImport.update({
   id: '/api/public/bridge/hojas',
   path: '/api/public/bridge/hojas',
@@ -175,6 +181,7 @@ export interface FileRoutesByFullPath {
   '/equipos/': typeof AuthenticatedEquiposIndexRoute
   '/informes/': typeof AuthenticatedInformesIndexRoute
   '/api/public/bridge/activos': typeof ApiPublicBridgeActivosRoute
+  '/api/public/bridge/escribir': typeof ApiPublicBridgeEscribirRoute
   '/api/public/bridge/hojas': typeof ApiPublicBridgeHojasRoute
   '/api/public/bridge/leer': typeof ApiPublicBridgeLeerRoute
   '/api/public/bridge/personal': typeof ApiPublicBridgePersonalRoute
@@ -199,6 +206,7 @@ export interface FileRoutesByTo {
   '/equipos': typeof AuthenticatedEquiposIndexRoute
   '/informes': typeof AuthenticatedInformesIndexRoute
   '/api/public/bridge/activos': typeof ApiPublicBridgeActivosRoute
+  '/api/public/bridge/escribir': typeof ApiPublicBridgeEscribirRoute
   '/api/public/bridge/hojas': typeof ApiPublicBridgeHojasRoute
   '/api/public/bridge/leer': typeof ApiPublicBridgeLeerRoute
   '/api/public/bridge/personal': typeof ApiPublicBridgePersonalRoute
@@ -225,6 +233,7 @@ export interface FileRoutesById {
   '/_authenticated/equipos/': typeof AuthenticatedEquiposIndexRoute
   '/_authenticated/informes/': typeof AuthenticatedInformesIndexRoute
   '/api/public/bridge/activos': typeof ApiPublicBridgeActivosRoute
+  '/api/public/bridge/escribir': typeof ApiPublicBridgeEscribirRoute
   '/api/public/bridge/hojas': typeof ApiPublicBridgeHojasRoute
   '/api/public/bridge/leer': typeof ApiPublicBridgeLeerRoute
   '/api/public/bridge/personal': typeof ApiPublicBridgePersonalRoute
@@ -251,6 +260,7 @@ export interface FileRouteTypes {
     | '/equipos/'
     | '/informes/'
     | '/api/public/bridge/activos'
+    | '/api/public/bridge/escribir'
     | '/api/public/bridge/hojas'
     | '/api/public/bridge/leer'
     | '/api/public/bridge/personal'
@@ -275,6 +285,7 @@ export interface FileRouteTypes {
     | '/equipos'
     | '/informes'
     | '/api/public/bridge/activos'
+    | '/api/public/bridge/escribir'
     | '/api/public/bridge/hojas'
     | '/api/public/bridge/leer'
     | '/api/public/bridge/personal'
@@ -300,6 +311,7 @@ export interface FileRouteTypes {
     | '/_authenticated/equipos/'
     | '/_authenticated/informes/'
     | '/api/public/bridge/activos'
+    | '/api/public/bridge/escribir'
     | '/api/public/bridge/hojas'
     | '/api/public/bridge/leer'
     | '/api/public/bridge/personal'
@@ -311,6 +323,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ApiPublicBridgeActivosRoute: typeof ApiPublicBridgeActivosRoute
+  ApiPublicBridgeEscribirRoute: typeof ApiPublicBridgeEscribirRoute
   ApiPublicBridgeHojasRoute: typeof ApiPublicBridgeHojasRoute
   ApiPublicBridgeLeerRoute: typeof ApiPublicBridgeLeerRoute
   ApiPublicBridgePersonalRoute: typeof ApiPublicBridgePersonalRoute
@@ -452,6 +465,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBridgeActivosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/bridge/escribir': {
+      id: '/api/public/bridge/escribir'
+      path: '/api/public/bridge/escribir'
+      fullPath: '/api/public/bridge/escribir'
+      preLoaderRoute: typeof ApiPublicBridgeEscribirRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/bridge/hojas': {
       id: '/api/public/bridge/hojas'
       path: '/api/public/bridge/hojas'
@@ -527,6 +547,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ApiPublicBridgeActivosRoute: ApiPublicBridgeActivosRoute,
+  ApiPublicBridgeEscribirRoute: ApiPublicBridgeEscribirRoute,
   ApiPublicBridgeHojasRoute: ApiPublicBridgeHojasRoute,
   ApiPublicBridgeLeerRoute: ApiPublicBridgeLeerRoute,
   ApiPublicBridgePersonalRoute: ApiPublicBridgePersonalRoute,
