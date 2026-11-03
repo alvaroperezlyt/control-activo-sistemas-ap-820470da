@@ -32,7 +32,7 @@ import {
   type Turno,
 } from "@/lib/planes";
 
-import { generarPlanPDF } from "@/lib/plan-pdf";
+import { generarListaVerificacionPDF, generarPlanPDF } from "@/lib/plan-pdf";
 
 export const Route = createFileRoute("/_authenticated/planes")({
   head: () => ({

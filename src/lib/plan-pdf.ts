@@ -293,3 +293,98 @@ export function generarPlanPDF(
   doc.save(nombre);
 }
 
+
+/** Lista de verificación de mantenimiento (SI-P2-F3): 20 filas por hoja para firma de conformidad. */
+export function generarListaVerificacionPDF(
+  plan: Pick<PlanPDF, "anio" | "mes">,
+  items: ItemPlan[],
+  logo: string | null = LOGO_EMPRESA,
+) {
+  const doc = new jsPDF({ unit: "mm", format: "letter", orientation: "portrait" });
+  const W = doc.internal.pageSize.getWidth();
+  const POR_HOJA = 20;
+  const hojas = Math.max(1, Math.ceil(items.length / POR_HOJA));
+  const x = 10;
+  const ancho = W - 20;
+  const colLogo = 46;
+  const colDato = 30;
+  const colValor = 22;
+  const colTitulo = ancho - colLogo - colDato - colValor;
+
+  for (let h = 0; h < hojas; h++) {
+    if (h > 0) doc.addPage();
+    const y = 10;
+    const alto = 20;
+    doc.setDrawColor(0);
+    doc.setLineWidth(0.4);
+    doc.rect(x, y, ancho, alto);
+    doc.rect(x, y, colLogo, alto);
+    doc.rect(x + colLogo, y, colTitulo, alto);
+    doc.line(x + colLogo, y + 7, x + colLogo + colTitulo, y + 7);
+    if (logo) {
+      try {
+        const w = Math.min(colLogo - 4, (alto - 3) * 2);
+        doc.addImage(logo, "PNG", x + (colLogo - w) / 2, y + (alto - w / 2) / 2, w, w / 2, undefined, "FAST");
+      } catch {
+        /* opcional */
+      }
+    }
+    const cx = x + colLogo + colTitulo / 2;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(7);
+    doc.text("SISTEMA DE GESTION INTEGRADO", cx, y + 3, { align: "center" });
+    doc.text("FORMULARIO O REGISTRO", cx, y + 6, { align: "center" });
+    doc.setFontSize(10);
+    doc.text("LISTA DE VERIFICACIÓN DE MANTENIMIENTO", cx, y + 14.5, { align: "center" });
+
+    const dx = x + colLogo + colTitulo;
+    const filas: [string, string][] = [
+      ["Codigo:", "SI-P2-F3"],
+      ["Version:", "3"],
+      ["Fecha de Vigencia", "31-may-24"],
+    ];
+    const hf = 5;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7.5);
+    filas.forEach(([k, v], i) => {
+      const fy = y + i * hf;
+      doc.rect(dx, fy, colDato, hf);
+      doc.rect(dx + colDato, fy, colValor, hf);
+      doc.text(k, dx + colDato - 1, fy + 3.5, { align: "right" });
+      doc.text(v, dx + colDato + colValor / 2, fy + 3.5, { align: "center" });
+    });
+    doc.rect(dx, y + 15, colDato + colValor, 5);
+    doc.text(`Hoja: ${h + 1} de ${hojas}`, dx + (colDato + colValor) / 2, y + 18.5, { align: "center" });
+
+    const pagina = items.slice(h * POR_HOJA, (h + 1) * POR_HOJA);
+    const body = Array.from({ length: POR_HOJA }, (_, i) => {
+      const it = pagina[i];
+      return [
+        String(h * POR_HOJA + i + 1),
+        it ? `${it.personal_nombre} (${it.codigo_interno})` : "",
+        it ? fechaCorta(it.fecha) : "",
+        "",
+      ];
+    });
+
+    autoTable(doc, {
+      startY: y + alto,
+      margin: { left: x, right: x },
+      theme: "grid",
+      styles: { fontSize: 8.5, lineColor: [0, 0, 0], lineWidth: 0.3, valign: "middle", minCellHeight: 11.2, textColor: 0 },
+      headStyles: { fillColor: [255, 255, 255], textColor: 0, fontStyle: "bold", halign: "center", minCellHeight: 5 },
+      head: [["No.", "UEI / CODIGO EI", "FECHA", "FIRMA"]],
+      body,
+      columnStyles: {
+        0: { cellWidth: 9, halign: "center" },
+        1: { cellWidth: ancho * 0.51 - 9 },
+        2: { cellWidth: ancho * 0.175, halign: "center" },
+        3: { cellWidth: ancho * 0.315 },
+      },
+    });
+    doc.setFontSize(8);
+    doc.text("SI-P2-F3", W - x, doc.internal.pageSize.getHeight() - 8, { align: "right" });
+  }
+
+  doc.save(`LISTA_VERIFICACION_MTTO_${MESES[plan.mes - 1]}_${plan.anio}.pdf`);
+}
